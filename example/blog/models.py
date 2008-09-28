@@ -6,6 +6,6 @@ class TextPost(GeneralPost):
     body = models.TextField(_('Post\'s body'))
 
 class LinkPost(GeneralPost):
-    url = models.TextField(_('URL'))
+    url = models.URLField(_('URL'), default='http://example.com')
     description = models.TextField(_('URL\'s description'))
 
