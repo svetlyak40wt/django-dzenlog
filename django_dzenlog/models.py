@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 import settings
 
@@ -8,6 +9,7 @@ if settings.HAS_TAGGING:
     from tagging.fields import TagField
 
 class GeneralPost(models.Model):
+    author      = models.ForeignKey(User)
     title       = models.CharField(_('Title'), max_length=100)
     slug        = models.SlugField(_('Slug title'), max_length=100, unique=True)
     created_at  = models.DateTimeField(_('Create date'), blank=True, editable=False)
