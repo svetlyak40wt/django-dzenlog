@@ -1,4 +1,10 @@
 #!/usr/bin/env python
+
+import sys
+sys.path.append('/home/art/my-apps')
+sys.path.append('/home/art/contrib-apps')
+sys.path.append('/home/art/django-unicode')
+
 from django.core.management import execute_manager
 try:
     import settings # Assumed to be in the same directory.
