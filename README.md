@@ -17,6 +17,9 @@ posts and links to internet resources. In that case, all you need
 is to define two models: TextPost and LinkPost. Each of these
 models should be derived from django_dzenlog.models.GeneralPost.
 
+Examples
+--------
+
 To learn, how to use Dzenlog, see example projects in the 'example'
 directory. It contains an example application 'blog' with two
 models, one for textual blog posts and another -- for links with
