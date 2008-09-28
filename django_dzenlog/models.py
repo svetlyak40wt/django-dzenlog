@@ -1,10 +1,9 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+import settings
 
-try:
+if settings.HAS_TAGGING:
     from tagging.fields import TagField
-except ImportError:
-    TagField = None
 
 class GeneralPost(models.Model):
     title       = models.CharField(_('Title'), max_length=100)
@@ -14,7 +13,7 @@ class GeneralPost(models.Model):
     publish_on  = models.DateTimeField(_('Publish date'), blank=True, null=True)
     comments_on = models.BooleanField(_('Comments On'), default=True)
 
-    if TagField:
+    if settings.HAS_TAGGING:
         tags    = TagField()
 
     def __unicode__(self):
