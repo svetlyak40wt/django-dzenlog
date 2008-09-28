@@ -1,3 +1,4 @@
+import deseb
 # Django settings for example project.
 
 DEBUG = True
