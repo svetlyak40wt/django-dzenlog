@@ -1,5 +1,5 @@
 Description
-===========
+-----------
 
 Django Dzenlog is a set of models and templates, which can be
 used to create blogs with different kinds media.
