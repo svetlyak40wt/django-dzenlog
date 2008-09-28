@@ -78,4 +78,6 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'tagging',
+    'django_dzenlog',
 )
