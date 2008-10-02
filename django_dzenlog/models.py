@@ -4,9 +4,38 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 import settings
+from pdb import set_trace
 
 if settings.HAS_TAGGING:
     from tagging.fields import TagField
+
+
+from django.db.models.query import CollectedObjects
+
+def virtual(func):
+    '''Find a child object and call method against it
+       instead os original 'func'.
+
+       Apply this decorator to any method of the base
+       class.
+    '''
+
+    def wrap(self, *args, **kwargs):
+        if getattr(self, '_child_object', None) is None:
+            sub_objects = CollectedObjects()
+            self._collect_sub_objects(sub_objects)
+            setattr(self,
+                    '_child_object',
+                    sub_objects.items()[0][1].values()[0])
+
+        child_method = getattr(self._child_object, func.__name__)
+        if getattr(child_method, '_is_virtual_wrap', False):
+            return func(self, *args, **kwargs)
+        return child_method(*args, **kwargs)
+    wrap.__doc__  = func.__doc__
+    wrap.__name__ = func.__name__
+    setattr(wrap, '_is_virtual_wrap', True)
+    return wrap
 
 class GeneralPost(models.Model):
     author      = models.ForeignKey(User)
@@ -22,6 +51,10 @@ class GeneralPost(models.Model):
 
     def __unicode__(self):
         return self.title
+
+    @virtual
+    def render(self):
+        return 'General post with title "%s"' % self.title
 
     def save(self):
         if not self.id:
