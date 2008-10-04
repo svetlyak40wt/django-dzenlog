@@ -84,4 +84,6 @@ INSTALLED_APPS = (
     'django_dzenlog',
     'blog',
     'debug_toolbar',
+    'django_extensions',
 )
+
