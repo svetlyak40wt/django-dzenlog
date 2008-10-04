@@ -1,5 +1,5 @@
 {% extends 'django_dzenlog/generalpost.html' %}
 
 {% block content %}
-    {{ object.textpost.body }}
+    {{ object.textpost.body|safe }}
 {% endblock %}

@@ -2,5 +2,5 @@
 
 {% block content %}
     <a href="{{ object.linkpost.url }}">{{ object.linkpost.url }}</a>
-    <p>{{ object.linkpost.description }}</p>
+    <p>{{ object.linkpost.description|safe }}</p>
 {% endblock %}
