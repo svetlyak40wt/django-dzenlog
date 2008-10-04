@@ -1,6 +1,6 @@
 {% extends 'django_dzenlog/generalpost.html' %}
 
 {% block content %}
-    {{ object.linkpost.url }}
+    <a href="{{ object.linkpost.url }}">{{ object.linkpost.url }}</a>
     <p>{{ object.linkpost.description }}</p>
 {% endblock %}
