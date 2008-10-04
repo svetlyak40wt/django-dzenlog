@@ -1,0 +1,12 @@
+{% load i18n webdesign %}
+<div class="b-article">
+    {% block title %}<h1>{{object.title}}</h1>{% endblock %}
+
+    {% block meta %}
+    <p class="b-meta">{% blocktrans with object.author as author %}Written by {{author}}{% endblocktrans %}</p>
+    {% endblock %}
+
+    {% block content %}
+        {% lorem 5 p %}
+    {% endblock %}
+</div>

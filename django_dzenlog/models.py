@@ -3,6 +3,8 @@ import datetime
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
+from django.template.loader import render_to_string
+
 import settings
 from pdb import set_trace
 
@@ -53,8 +55,13 @@ class GeneralPost(models.Model):
         return self.title
 
     @virtual
+    def get_template(self):
+        return 'django_dzenlog/generalpost.html'
+
     def render(self):
-        return 'General post with title "%s"' % self.title
+        return render_to_string(
+                self.get_template(),
+                dict(object=self))
 
     def save(self):
         if not self.id:
