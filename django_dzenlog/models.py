@@ -54,14 +54,24 @@ class GeneralPost(models.Model):
     def __unicode__(self):
         return self.title
 
+    class Meta:
+        verbose_name = _('Post')
+        verbose_name_plural = _('Posts')
+        ordering = ('-publish_at',)
+
     @virtual
-    def get_template(self):
+    def _get_template(self):
         return 'django_dzenlog/generalpost.html'
 
     def render(self):
         return render_to_string(
-                self.get_template(),
+                self._get_template(),
                 dict(object=self))
+
+    def render_feed(self):
+        return render_to_string(
+                self._get_template(),
+                dict(object=self, for_feed=True))
 
     @models.permalink
     def get_absolute_url(self):

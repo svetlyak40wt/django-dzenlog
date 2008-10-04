@@ -5,7 +5,7 @@ from django_dzenlog.models import GeneralPost
 class TextPost(GeneralPost):
     body = models.TextField(_('Post\'s body'))
 
-    def get_template(self):
+    def _get_template(self):
         return 'blog/text_post.html'
 
     def _get_absolute_url(self):
@@ -16,7 +16,7 @@ class LinkPost(GeneralPost):
     url = models.URLField(_('URL'), default='http://example.com')
     description = models.TextField(_('URL\'s description'), blank=True)
 
-    def get_template(self):
+    def _get_template(self):
         return 'blog/link_post.html'
 
     def _get_absolute_url(self):
