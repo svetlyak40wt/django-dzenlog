@@ -8,10 +8,17 @@ class TextPost(GeneralPost):
     def get_template(self):
         return 'blog/text_post.html'
 
+    def _get_absolute_url(self):
+        return ('blog-text-details', (), dict(slug=self.slug))
+
+
 class LinkPost(GeneralPost):
     url = models.URLField(_('URL'), default='http://example.com')
     description = models.TextField(_('URL\'s description'), blank=True)
 
     def get_template(self):
         return 'blog/link_post.html'
+
+    def _get_absolute_url(self):
+        return ('blog-link-details', (), dict(slug=self.slug))
 

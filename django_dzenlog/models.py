@@ -65,6 +65,10 @@ class GeneralPost(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
+        return self._get_absolute_url()
+
+    @virtual
+    def _get_absolute_url(self):
         return ('dzenlog-post-details', (), dict(slug=self.slug))
 
     def save(self):
