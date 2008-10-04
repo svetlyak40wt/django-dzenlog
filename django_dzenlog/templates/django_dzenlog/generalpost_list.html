@@ -1,0 +1,8 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block content %}
+    {% for object in object_list %}
+        <p>{{object}}</p>
+    {% endfor %}
+{% endblock %}
