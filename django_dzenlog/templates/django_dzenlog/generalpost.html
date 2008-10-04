@@ -1,6 +1,6 @@
 {% load i18n webdesign %}
 <div class="b-article">
-    {% block title %}<h1>{{object.title}}</h1>{% endblock %}
+    {% block title %}<h1><a href="{{object.get_absolute_url}}">{{object.title}}</a></h1>{% endblock %}
 
     {% block meta %}
     <p class="b-meta">{% blocktrans with object.author as author %}Written by {{author}}{% endblocktrans %}</p>

@@ -63,6 +63,10 @@ class GeneralPost(models.Model):
                 self.get_template(),
                 dict(object=self))
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('dzenlog-post-details', (), dict(slug=self.slug))
+
     def save(self):
         if not self.id:
             self.created_at = datetime.datetime.today()

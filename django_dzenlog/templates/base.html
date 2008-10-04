@@ -1,9 +1,11 @@
+{% load i18n %}
 <html>
     <head>
         <title>{% block title %}Dzenlog example{% endblock %}</title>
         {% block head %}{% endblock %}
     </head>
     <body>
+        <h1>{% trans 'Dzenlog example' %}</h1>
         {% block content %}{% endblock %}
     </body>
 </html>

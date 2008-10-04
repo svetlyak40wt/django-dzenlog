@@ -6,7 +6,7 @@ post_list = {
 }
 
 urlpatterns = patterns('django.views.generic',
-   (r'^(?P<slug>[a-z0-9-])/$', 'list_detail.object_detail', post_list),
-   (r'^$', 'list_detail.object_list', post_list),
+   (r'^(?P<slug>[a-z0-9-]+)/$', 'list_detail.object_detail', post_list, 'dzenlog-post-details'),
+   (r'^$', 'list_detail.object_list', post_list, 'dzenlog-post-list'),
 )
 

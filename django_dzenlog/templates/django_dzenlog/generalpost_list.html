@@ -2,8 +2,7 @@
 {% load i18n %}
 
 {% block content %}
-    <h1>{% trans 'Dzenlog example' %}</h1>
     {% for object in object_list %}
-        <p>{{object.render}}</p>
+        {{object.render}}
     {% endfor %}
 {% endblock %}
