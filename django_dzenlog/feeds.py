@@ -22,3 +22,7 @@ class LatestPosts(Feed):
     def item_author_name(self, item):
         return item.author
 
+    def item_categories(self, item):
+        if settings.HAS_TAGGING:
+            return item.tags
+

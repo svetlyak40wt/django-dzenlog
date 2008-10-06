@@ -1,10 +1,25 @@
 {% load i18n webdesign %}
+
 <div class="b-article">
     {% if not for_feed %}
         {% block title %}<h1><a href="{{object.get_absolute_url}}">{{object.title}}</a></h1>{% endblock %}
 
         {% block meta %}
-        <p class="b-meta">{% blocktrans with object.author as author %}Written by {{author}}{% endblocktrans %}</p>
+        <p class="b-meta">
+            {% blocktrans with object.author as author %}Published by {{author}}{% endblocktrans %}
+            {% if settings.HAS_TAGGING %}
+                {% load tagging_tags %}
+                {% tags_for_object object as object_tags %}
+
+                {% if object_tags %}
+                    {% trans 'under' %}
+
+                    {% for tag in object_tags %}
+                        {{tag}}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endif %}
+        </p>
         {% endblock %}
     {% endif %}
 

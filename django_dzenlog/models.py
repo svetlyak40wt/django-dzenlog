@@ -66,12 +66,12 @@ class GeneralPost(models.Model):
     def render(self):
         return render_to_string(
                 self._get_template(),
-                dict(object=self))
+                dict(object=self, settings=settings))
 
     def render_feed(self):
         return render_to_string(
                 self._get_template(),
-                dict(object=self, for_feed=True))
+                dict(object=self, settings=settings, for_feed=True))
 
     @models.permalink
     def get_absolute_url(self):
