@@ -68,8 +68,9 @@ class Tagging(unittest.TestCase):
         self.assertEqual(1, len(tags))
 
 from django.contrib.contenttypes.models import ContentType
+from utils import upcast
 
-class ContentTypes(unittest.TestCase):
+class Upcast(unittest.TestCase):
     def setUp(self):
         Parent.objects.all().delete()
 
@@ -80,9 +81,12 @@ class ContentTypes(unittest.TestCase):
         parent = Parent.objects.get(id=child.parent_ptr_id)
 
         parent_ct = ContentType.objects.get_for_model(parent)
+        parent_ct_upcasted = ContentType.objects.get_for_model(upcast(parent))
         child_ct = ContentType.objects.get_for_model(child)
 
-        self.assertEqual(parent_ct, child_ct)
+        self.assertNotEqual(parent_ct, child_ct)
+        self.assertEqual(parent_ct_upcasted, child_ct)
+        self.assertEqual(upcast(child), child)
 
     def testInheritanceWithMultipleChilds(self):
         child1 = Child()
@@ -95,14 +99,22 @@ class ContentTypes(unittest.TestCase):
 
         parent1 = Parent.objects.get(id=child1.parent_ptr_id)
         parent1_ct = ContentType.objects.get_for_model(parent1)
+        parent1_ct_upcasted = ContentType.objects.get_for_model(upcast(parent1))
 
         parent2 = Parent.objects.get(id=child2.parent_ptr_id)
         parent2_ct = ContentType.objects.get_for_model(parent2)
+        parent2_ct_upcasted = ContentType.objects.get_for_model(upcast(parent2))
 
         child1_ct = ContentType.objects.get_for_model(child1)
         child2_ct = ContentType.objects.get_for_model(child2)
 
         self.assertNotEqual(child1_ct, child2_ct)
-        self.assertEqual(parent1_ct, child1_ct)
-        self.assertEqual(parent2_ct, child2_ct)
+
+        self.assertNotEqual(parent1_ct, child1_ct)
+        self.assertEqual(parent1_ct_upcasted, child1_ct)
+        self.assertEqual(upcast(parent1), upcast(child1))
+
+        self.assertNotEqual(parent2_ct, child2_ct)
+        self.assertEqual(parent2_ct_upcasted, child2_ct)
+        self.assertEqual(upcast(parent2), upcast(child2))
 
