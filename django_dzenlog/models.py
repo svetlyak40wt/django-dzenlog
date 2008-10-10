@@ -82,8 +82,9 @@ class GeneralPost(models.Model):
         return ('dzenlog-post-details', (), dict(slug=self.slug))
 
     def save(self):
+        today = datetime.datetime.today()
         if not self.id:
-            self.created_at = datetime.datetime.today()
-        self.updated_at = datetime.datetime.today()
+            self.created_at = today
+        self.updated_at = today
         return super(GeneralPost, self).save()
 
