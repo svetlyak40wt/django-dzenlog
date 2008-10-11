@@ -11,6 +11,7 @@ def upcast(obj):
         obj._collect_sub_objects(sub_objects)
         child = sub_objects.items()[0][1].values()[0]
         setattr(obj, '_upcast_result', child)
+        setattr(child, '_upcast_result', child)
         return child
 
 
