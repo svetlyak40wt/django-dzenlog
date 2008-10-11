@@ -12,26 +12,6 @@ from django_dzenlog.models import GeneralPost
 class Parent(models.Model): pass
 class Child(Parent): pass
 class Child2(Parent): pass
-test_signal = Signal(providing_args=["instance"])
-
-
-class SignalsAndInheritance(unittest.TestCase):
-    def testPropagateToParent(self):
-        receiver1 = lambda signal, sender: True
-
-        test_signal.connect(receiver1, Parent, True)
-
-        responses = dict(test_signal.send(sender=Child))
-        self.assertEqual(1, len(responses))
-        self.assertEqual(True, responses[receiver1])
-
-    def testNotPropagateToChild(self):
-        receiver1 = lambda signal, sender: True
-
-        test_signal.connect(receiver1, Child, True)
-
-        responses = dict(test_signal.send(sender=Parent))
-        self.assertEqual(0, len(responses))
 
 
 class TestPost(GeneralPost): pass
@@ -74,7 +54,7 @@ class Upcast(unittest.TestCase):
     def setUp(self):
         Parent.objects.all().delete()
 
-    def testInheritance(self):
+    def testUpcast(self):
         child = Child()
         child.save()
 
@@ -88,7 +68,7 @@ class Upcast(unittest.TestCase):
         self.assertEqual(parent_ct_upcasted, child_ct)
         self.assertEqual(upcast(child), child)
 
-    def testInheritanceWithMultipleChilds(self):
+    def testUpcastWithMultipleChilds(self):
         child1 = Child()
         child1.save()
 
