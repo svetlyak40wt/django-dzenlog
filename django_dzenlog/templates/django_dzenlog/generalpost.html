@@ -1,4 +1,4 @@
-{% load i18n webdesign %}
+{% load i18n %}
 
 <div class="b-article">
     {% if not for_feed %}
@@ -23,6 +23,7 @@
     {% endif %}
 
     {% block content %}
+        {% load webdesign %}
         {% lorem 5 p %}
     {% endblock %}
 </div>

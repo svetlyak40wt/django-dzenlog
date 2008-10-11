@@ -4,8 +4,10 @@ from django.contrib.syndication.feeds import FeedDoesNotExist, Feed
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
+import settings
 
 from models import GeneralPost
+from utils import upcast
 
 class LatestPosts(Feed):
     title = _('Latest posts')
@@ -24,5 +26,6 @@ class LatestPosts(Feed):
 
     def item_categories(self, item):
         if settings.HAS_TAGGING:
-            return item.tags
+            from tagging.models import Tag
+            return Tag.objects.get_for_object(upcast(item))
 
