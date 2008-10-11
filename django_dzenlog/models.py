@@ -41,9 +41,9 @@ def virtual(func):
 
 class PostMeta(models.base.ModelBase):
     def __new__(cls, name, bases, attrs):
-        print 'hello'
         new_class = super(PostMeta, cls).__new__(cls, name, bases, attrs)
-        models.signals.post_save.connect(new_class._meta.get_field('tags')._save, new_class)
+        if settings.HAS_TAGGING:
+            models.signals.post_save.connect(new_class._meta.get_field('tags')._save, new_class)
         return new_class
 
 class GeneralPost(models.Model):
