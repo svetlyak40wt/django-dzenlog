@@ -39,7 +39,15 @@ def virtual(func):
     setattr(wrap, '_is_virtual_wrap', True)
     return wrap
 
+class PostMeta(models.base.ModelBase):
+    def __new__(cls, name, bases, attrs):
+        print 'hello'
+        new_class = super(PostMeta, cls).__new__(cls, name, bases, attrs)
+        models.signals.post_save.connect(new_class._meta.get_field('tags')._save, new_class)
+        return new_class
+
 class GeneralPost(models.Model):
+    __metaclass__ = PostMeta
     author      = models.ForeignKey(User)
     title       = models.CharField(_('Title'), max_length=100)
     slug        = models.SlugField(_('Slug title'), max_length=100, unique=True)

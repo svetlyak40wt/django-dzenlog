@@ -17,8 +17,6 @@ class Child2(Parent): pass
 
 class TestPost(GeneralPost): pass
 
-models.signals.post_save.connect(GeneralPost._meta.get_field('tags')._save, TestPost, True)
-
 class Tagging(unittest.TestCase):
     def setUp(self):
         (self.author, created) = User.objects.get_or_create(username='tester')
