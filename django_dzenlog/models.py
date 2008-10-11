@@ -36,9 +36,6 @@ class GeneralPost(models.Model):
     if settings.HAS_TAGGING:
         tags    = TagField()
 
-        def get_tags(self):
-            return Tag.objects.get_for_object(upcast(self))
-
     def __unicode__(self):
         return self.title
 
@@ -54,12 +51,12 @@ class GeneralPost(models.Model):
     def render(self):
         return render_to_string(
                 self._get_template(),
-                dict(object=self, settings=settings))
+                dict(object=upcast(self), settings=settings))
 
     def render_feed(self):
         return render_to_string(
                 self._get_template(),
-                dict(object=self, settings=settings, for_feed=True))
+                dict(object=upcast(self), settings=settings, for_feed=True))
 
     @models.permalink
     def get_absolute_url(self):
