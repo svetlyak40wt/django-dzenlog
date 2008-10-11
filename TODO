@@ -1,8 +1,0 @@
-TODO
-====
-
-* Add universal rendering for different kind posts.
-* Add common RSS feed for all types of posts.
-* Add support for django-multilingual in the title and tags.
-
-Any help would be appreciated! Send your patches to svetlyak.40wt@gmail.com.

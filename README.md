@@ -24,3 +24,12 @@ To learn, how to use Dzenlog, see example projects in the 'example'
 directory. It contains an example application 'blog' with two
 models, one for textual blog posts and another -- for links with
 descriptions.
+
+TODO
+----
+
+* Add separate feeds for tags, post types and types with tags.
+* Add caching.
+* Add support for django-multilingual in the title and tags.
+
+Any help would be appreciated! Please, send your patches to svetlyak.40wt@gmail.com.
