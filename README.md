@@ -17,6 +17,15 @@ posts and links to internet resources. In that case, all you need
 is to define two models: TextPost and LinkPost. Each of these
 models should be derived from django_dzenlog.models.GeneralPost.
 
+Features
+--------
+
+* Simple way to add new types of posts.
+* All post types can be agregated in one feed.
+* Separate feed for each post type.
+* Example projects, which uses most features of this application.
+* Tagging support.
+
 Examples
 --------
 
@@ -28,7 +37,7 @@ descriptions.
 TODO
 ----
 
-* Add separate feeds for tags, post types and types with tags.
+* Add separate feeds for tags and types with tags.
 * Add caching.
 * Add support for django-multilingual in the title and tags.
 
