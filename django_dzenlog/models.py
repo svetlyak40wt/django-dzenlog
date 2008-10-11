@@ -13,33 +13,8 @@ if settings.HAS_TAGGING:
     from tagging.models import Tag
 
 
-from django.db.models.query import CollectedObjects
-from utils import upcast
+from utils import upcast, virtual
 
-def virtual(func):
-    '''Find a child object and call method against it
-       instead os original 'func'.
-
-       Apply this decorator to any method of the base
-       class.
-    '''
-
-    def wrap(self, *args, **kwargs):
-        if getattr(self, '_child_object', None) is None:
-            sub_objects = CollectedObjects()
-            self._collect_sub_objects(sub_objects)
-            setattr(self,
-                    '_child_object',
-                    sub_objects.items()[0][1].values()[0])
-
-        child_method = getattr(self._child_object, func.__name__)
-        if getattr(child_method, '_is_virtual_wrap', False):
-            return func(self, *args, **kwargs)
-        return child_method(*args, **kwargs)
-    wrap.__doc__  = func.__doc__
-    wrap.__name__ = func.__name__
-    setattr(wrap, '_is_virtual_wrap', True)
-    return wrap
 
 class PostMeta(models.base.ModelBase):
     def __new__(cls, name, bases, attrs):
