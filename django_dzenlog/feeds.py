@@ -9,23 +9,26 @@ import settings
 from models import GeneralPost
 from utils import upcast
 
-class LatestPosts(Feed):
-    title = _('Latest posts')
+def latest(cls, list_url_name):
+    class PostsFeed(Feed):
+        title = _('Latest posts')
 
-    def link(self):
-        return reverse('dzenlog-post-list')
+        def link(self):
+            return reverse(list_url_name)
 
-    def items(self):
-        return GeneralPost.objects.filter(publish_at__lte=datetime.today())[:20]
+        def items(self):
+            return cls.objects.filter(publish_at__lte=datetime.today())[:20]
 
-    def item_pubdate(self, item):
-        return item.publish_at
+        def item_pubdate(self, item):
+            return item.publish_at
 
-    def item_author_name(self, item):
-        return item.author
+        def item_author_name(self, item):
+            return item.author
 
-    def item_categories(self, item):
-        if settings.HAS_TAGGING:
-            from tagging.models import Tag
-            return Tag.objects.get_for_object(upcast(item))
+        def item_categories(self, item):
+            if settings.HAS_TAGGING:
+                from tagging.models import Tag
+                return Tag.objects.get_for_object(upcast(item))
+    return PostsFeed
 
+LatestPosts = latest(GeneralPost, 'dzenlog-post-list')
