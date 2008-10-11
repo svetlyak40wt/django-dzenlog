@@ -10,9 +10,11 @@ from pdb import set_trace
 
 if settings.HAS_TAGGING:
     from tagging.fields import TagField
+    from tagging.models import Tag
 
 
 from django.db.models.query import CollectedObjects
+from utils import upcast
 
 def virtual(func):
     '''Find a child object and call method against it
@@ -58,6 +60,9 @@ class GeneralPost(models.Model):
 
     if settings.HAS_TAGGING:
         tags    = TagField()
+
+        def get_tags(self):
+            return Tag.objects.get_for_object(upcast(self))
 
     def __unicode__(self):
         return self.title
