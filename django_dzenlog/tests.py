@@ -6,6 +6,7 @@ from django.dispatch import Signal
 from django.contrib.auth.models import User
 
 from tagging.models import Tag
+from tagging.fields import TagField
 from django_dzenlog.models import GeneralPost
 
 
@@ -16,10 +17,11 @@ class Child2(Parent): pass
 
 class TestPost(GeneralPost): pass
 
+models.signals.post_save.connect(GeneralPost._meta.get_field('tags')._save, TestPost, True)
+
 class Tagging(unittest.TestCase):
     def setUp(self):
         (self.author, created) = User.objects.get_or_create(username='tester')
-#        self.author.save()
 
     def tearDown(self):
         User.objects.all().delete()
@@ -27,6 +29,9 @@ class Tagging(unittest.TestCase):
     def testSettingTags(self):
         p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
         p.save()
+
+        p2 = TestPost.objects.get(id=p.id)
+        self.assertEqual('one, two, three', p2.tags)
 
         tags = Tag.objects.get_for_object(p)
         self.assertEqual(3, len(tags))
@@ -46,6 +51,7 @@ class Tagging(unittest.TestCase):
 
         tags = Tag.objects.get_for_object(p)
         self.assertEqual(1, len(tags))
+        self.assertEqual('blah', tags[0].name)
 
 from django.contrib.contenttypes.models import ContentType
 from utils import upcast
