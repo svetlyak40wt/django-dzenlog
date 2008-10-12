@@ -3,7 +3,7 @@ from models import GeneralPost
 from feeds import latest
 
 post_list = {
-    'queryset': GeneralPost.objects.all(),
+    'queryset': GeneralPost.objects.published(),
 }
 
 feeds = {

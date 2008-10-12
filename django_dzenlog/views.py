@@ -14,5 +14,5 @@ def bytag(request, slug):
 
     return object_list(
         request,
-        queryset = TaggedItem.objects.get_by_model(GeneralPost, tags),
+        queryset = TaggedItem.objects.get_by_model(GeneralPost.objects.published(), tags),
         extra_context = {'tags': tags})

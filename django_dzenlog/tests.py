@@ -1,9 +1,11 @@
-import unittest
+from datetime import datetime
 from pdb import set_trace
 
+from django.test import TestCase
 from django.db import models
 from django.dispatch import Signal
 from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
 
 from tagging.models import Tag
 from tagging.fields import TagField
@@ -17,12 +19,9 @@ class Child2(Parent): pass
 
 class TestPost(GeneralPost): pass
 
-class Tagging(unittest.TestCase):
+class Tagging(TestCase):
     def setUp(self):
         (self.author, created) = User.objects.get_or_create(username='tester')
-
-    def tearDown(self):
-        User.objects.all().delete()
 
     def testSettingTags(self):
         p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
@@ -57,7 +56,7 @@ class Tagging(unittest.TestCase):
 from django.contrib.contenttypes.models import ContentType
 from utils import upcast
 
-class Upcast(unittest.TestCase):
+class Upcast(TestCase):
     def setUp(self):
         Parent.objects.all().delete()
 
@@ -104,4 +103,36 @@ class Upcast(unittest.TestCase):
         self.assertNotEqual(parent2_ct, child2_ct)
         self.assertEqual(parent2_ct_upcasted, child2_ct)
         self.assertEqual(upcast(parent2), upcast(child2))
+
+class PostsPublicity(TestCase):
+    def setUp(self):
+        (self.author, created) = User.objects.get_or_create(username='tester')
+        TestPost.objects.all().delete()
+
+        TestPost(author=self.author,
+                 title='First post',
+                 slug='first',
+                 tags='one, two',
+                 publish_at=datetime.today()
+                 ).save()
+        TestPost(author=self.author,
+                 title='Second post',
+                 slug='second',
+                 tags='one, two'
+                 ).save()
+
+    def testInHtml(self):
+        response = self.client.get(reverse('dzenlog-post-list'))
+        self.assertContains(response, 'First post')
+        self.assertNotContains(response, 'Second post')
+
+    def testInRss(self):
+        response = self.client.get(reverse('dzenlog-feeds', kwargs=dict(url='all')))
+        self.assertContains(response, 'First post')
+        self.assertNotContains(response, 'Second post')
+
+    def testByTag(self):
+        response = self.client.get(reverse('dzenlog-post-bytag', kwargs=dict(slug='one')))
+        self.assertContains(response, 'First post')
+        self.assertNotContains(response, 'Second post')
 

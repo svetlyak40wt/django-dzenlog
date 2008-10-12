@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -15,6 +15,9 @@ if settings.HAS_TAGGING:
 
 from utils import upcast, virtual
 
+class GeneralPostManager(models.Manager):
+    def published(self):
+        return self.filter(publish_at__lte=datetime.today())
 
 class GeneralPost(models.Model):
     author      = models.ForeignKey(User)
@@ -36,6 +39,7 @@ class GeneralPost(models.Model):
         def get_tags(self, *args, **kwargs):
             return Tag.objects.get_for_object(self._downcast())
 
+    objects = GeneralPostManager()
 
     def __unicode__(self):
         return self.title
@@ -71,7 +75,7 @@ class GeneralPost(models.Model):
         return ('dzenlog-post-details', (), dict(slug=self.slug))
 
     def save(self):
-        today = datetime.datetime.today()
+        today = datetime.today()
         if not self.id:
             self.created_at = today
         self.updated_at = today

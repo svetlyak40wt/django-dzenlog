@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.contrib.syndication.feeds import FeedDoesNotExist, Feed
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
@@ -17,7 +15,7 @@ def latest(cls, list_url_name):
             return reverse(list_url_name)
 
         def items(self):
-            return cls.objects.filter(publish_at__lte=datetime.today())[:20]
+            return cls.objects.published()[:20]
 
         def item_pubdate(self, item):
             return item.publish_at
