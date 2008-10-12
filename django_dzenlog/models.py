@@ -16,15 +16,7 @@ if settings.HAS_TAGGING:
 from utils import upcast, virtual
 
 
-class PostMeta(models.base.ModelBase):
-    def __new__(cls, name, bases, attrs):
-        new_class = super(PostMeta, cls).__new__(cls, name, bases, attrs)
-        if settings.HAS_TAGGING:
-            models.signals.post_save.connect(new_class._meta.get_field('tags')._save, new_class)
-        return new_class
-
 class GeneralPost(models.Model):
-    __metaclass__ = PostMeta
     author      = models.ForeignKey(User)
     title       = models.CharField(_('Title'), max_length=100)
     slug        = models.SlugField(_('Slug title'), max_length=100, unique=True)
@@ -36,8 +28,20 @@ class GeneralPost(models.Model):
     if settings.HAS_TAGGING:
         tags    = TagField()
 
+        def _save_tags(self, *args, **kwargs):
+            instance = self._downcast()
+            setattr(instance, '_tags_cache', self._tags_cache)
+            self._meta.get_field('tags')._save(instance=instance)
+
+        def get_tags(self, *args, **kwargs):
+            return Tag.objects.get_for_object(self._downcast())
+
+
     def __unicode__(self):
         return self.title
+
+    def _downcast(self):
+        return getattr(self, 'generalpost_ptr', self)
 
     class Meta:
         verbose_name = _('Post')
@@ -71,5 +75,11 @@ class GeneralPost(models.Model):
         if not self.id:
             self.created_at = today
         self.updated_at = today
-        return super(GeneralPost, self).save()
+
+        result = super(GeneralPost, self).save()
+
+        if settings.HAS_TAGGING:
+            self._save_tags()
+
+        return result
 

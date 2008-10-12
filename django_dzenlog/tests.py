@@ -28,26 +28,29 @@ class Tagging(unittest.TestCase):
         p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
         p.save()
 
-        p2 = TestPost.objects.get(id=p.id)
+        p2 = GeneralPost.objects.get(id=p.id)
         self.assertEqual('one, two, three', p2.tags)
 
-        tags = Tag.objects.get_for_object(p)
+        tags = Tag.objects.get_for_object(p2)
         self.assertEqual(3, len(tags))
 
     def testUpdateTags(self):
         p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
         p.save()
 
+        tags = p.get_tags()
+        self.assertEqual(3, len(tags))
+
         p.tags = ''
         p.save()
 
-        tags = Tag.objects.get_for_object(p)
+        tags = p.get_tags()
         self.assertEqual(0, len(tags))
 
         p.tags = 'blah'
         p.save()
 
-        tags = Tag.objects.get_for_object(p)
+        tags = p.get_tags()
         self.assertEqual(1, len(tags))
         self.assertEqual('blah', tags[0].name)
 

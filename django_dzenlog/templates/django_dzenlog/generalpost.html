@@ -8,15 +8,15 @@
         <p class="b-meta">
             {% blocktrans with object.author as author %}Published by {{author}}{% endblocktrans %}
             {% if settings.HAS_TAGGING %}
-                {% load tagging_tags %}
-                {% tags_for_object object as object_tags %}
-                {% if object_tags %}
-                    {% trans 'under' %}
+                {% with object.get_tags as object_tags %}
+                    {% if object_tags %}
+                        {% trans 'under' %}
 
-                    {% for tag in object_tags %}
-                        {{tag}}{% if not forloop.last %},{% endif %}
-                    {% endfor %}
-                {% endif %}
+                        {% for tag in object_tags %}
+                            {{tag}}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
             {% endif %}
         </p>
         {% endblock %}
