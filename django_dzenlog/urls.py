@@ -1,13 +1,13 @@
 from django.conf.urls.defaults import *
 from models import GeneralPost
-from feeds import LatestPosts
+from feeds import latest
 
 post_list = {
     'queryset': GeneralPost.objects.all(),
 }
 
 feeds = {
-    'all': LatestPosts,
+    'all': latest(GeneralPost, 'dzenlog-post-list'),
 }
 
 urlpatterns = patterns('django.views.generic',
