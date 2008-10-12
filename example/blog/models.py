@@ -13,7 +13,7 @@ class TextPost(GeneralPost):
 
 
 class LinkPost(GeneralPost):
-    url = models.URLField(_('URL'), default='http://example.com')
+    url = models.URLField(_('URL'), default='http://example.com', verify_exists=False)
     description = models.TextField(_('URL\'s description'), blank=True)
 
     def _get_template(self):
