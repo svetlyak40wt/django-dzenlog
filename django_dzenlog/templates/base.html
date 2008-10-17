@@ -2,10 +2,19 @@
 <html>
     <head>
         <title>{% block title %}Dzenlog example{% endblock %}</title>
+        <style>
+        .l-header h1 {font-size: 2em;}
+        .l-content h1 {font-size: 1.5em;}
+        .l-content h2 {font-size: 1.3em;}
+        </style>
         {% block head %}{% endblock %}
     </head>
     <body>
-        <h1>{% trans 'Dzenlog example' %}</h1>
-        {% block content %}{% endblock %}
+        <div class="l-header">
+            <h1><a href="/">{% trans 'Dzenlog example' %}</a></h1>
+        </div>
+        <div class="l-content">
+            {% block content %}{% endblock %}
+        </div>
     </body>
 </html>
