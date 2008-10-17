@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% load i18n %}
+{% load i18n dzenlog_tags %}
 
 {% block head %}
     {{ block.super }}
@@ -8,6 +8,6 @@
 
 {% block content %}
     {% for object in object_list %}
-        {{object.render}}
+        {% render object %}
     {% endfor %}
 {% endblock %}

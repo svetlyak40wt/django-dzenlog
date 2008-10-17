@@ -56,15 +56,15 @@ class GeneralPost(models.Model):
     def _get_template(self):
         return 'django_dzenlog/generalpost.html'
 
-    def render(self):
+    def render(self, **kwargs):
         return render_to_string(
                 self._get_template(),
-                dict(object=upcast(self), settings=settings))
+                dict(object=upcast(self), settings=settings, **kwargs))
 
-    def render_feed(self):
+    def render_feed(self, **kwargs):
         return render_to_string(
                 self._get_template(),
-                dict(object=upcast(self), settings=settings, for_feed=True))
+                dict(object=upcast(self), settings=settings, for_feed=True, **kwargs))
 
     @models.permalink
     def get_absolute_url(self):

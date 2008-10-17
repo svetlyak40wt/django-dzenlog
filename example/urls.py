@@ -9,3 +9,4 @@ urlpatterns = patterns('',
     (r'^', include('blog.urls')), # place this before dzenlog's urls if the have one root.
     (r'^', include('django_dzenlog.urls')),
 )
+

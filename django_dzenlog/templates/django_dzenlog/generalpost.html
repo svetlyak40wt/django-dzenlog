@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n dzenlog_tags %}
 
 <div class="b-article">
     {% if not for_feed %}
@@ -13,7 +13,7 @@
                         {% trans 'under' %}
 
                         {% for tag in object_tags %}
-                            <a href="{% url dzenlog-post-bytag tag.name %}">{{tag}}</a>{% if not forloop.last %},{% endif %}
+                            <a href="{% call bytag_url tag.name %}">{{tag.name}}</a>{% if not forloop.last %},{% endif %}
                         {% endfor %}
                     {% endif %}
                 {% endwith %}

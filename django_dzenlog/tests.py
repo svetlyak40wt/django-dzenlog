@@ -6,6 +6,8 @@ from django.db import models
 from django.dispatch import Signal
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse
+from django.template import Context
+from django.template.loader import get_template_from_string
 
 from tagging.models import Tag
 from tagging.fields import TagField
@@ -136,3 +138,8 @@ class PostsPublicity(TestCase):
         self.assertContains(response, 'First post')
         self.assertNotContains(response, 'Second post')
 
+class TemplateTags(TestCase):
+    def testCall(self):
+        t = get_template_from_string('''{% load dzenlog_tags %}{% call blah minor %}''')
+        ctx = Context(dict(blah=lambda x: x, minor='test'))
+        self.assertEqual('test', t.render(ctx))

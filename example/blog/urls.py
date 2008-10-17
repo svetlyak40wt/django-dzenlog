@@ -4,11 +4,17 @@ from models import TextPost, LinkPost
 text_list = {
     'queryset': TextPost.objects.all(),
     'template_name': 'django_dzenlog/generalpost_list.html',
+    'extra_context': {
+        'bytag_page_name': 'blog-text-bytag',
+    }
 }
 
 link_list = {
     'queryset': LinkPost.objects.all(),
     'template_name': 'django_dzenlog/generalpost_list.html',
+    'extra_context': {
+        'bytag_page_name': 'blog-link-bytag',
+    }
 }
 
 text_info = text_list.copy()
@@ -26,7 +32,12 @@ link_feeds = {
     'all': latest(LinkPost, 'blog-link-list'),
 }
 
-urlpatterns = patterns('django.views.generic',
+urlpatterns = patterns('django_dzenlog.views',
+   (r'^text/bytag/(?P<slug>.+)/$', 'bytag', text_list, 'blog-text-bytag'),
+   (r'^link/bytag/(?P<slug>.+)/$', 'bytag', link_list, 'blog-link-bytag'),
+)
+
+urlpatterns += patterns('django.views.generic',
     (r'^text/(?P<slug>[a-z0-9-]+)/$', 'list_detail.object_detail', text_info, 'blog-text-details'),
     (r'^link/(?P<slug>[a-z0-9-]+)/$', 'list_detail.object_detail', link_info, 'blog-link-details'),
 

@@ -4,6 +4,9 @@ from feeds import latest
 
 post_list = {
     'queryset': GeneralPost.objects.published(),
+    'extra_context': {
+        'bytag_page_name': 'dzenlog-post-bytag',
+    }
 }
 
 feeds = {
@@ -11,7 +14,7 @@ feeds = {
 }
 
 urlpatterns = patterns('django_dzenlog.views',
-   (r'^bytag/(?P<slug>.+)/$', 'bytag', {}, 'dzenlog-post-bytag'),
+   (r'^bytag/(?P<slug>.+)/$', 'bytag', post_list, 'dzenlog-post-bytag'),
 )
 
 urlpatterns += patterns('django.views.generic',

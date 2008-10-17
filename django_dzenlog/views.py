@@ -6,13 +6,34 @@ from tagging.models import Tag, TaggedItem
 from models import GeneralPost
 
 
-def bytag(request, slug):
+def bytag(request, slug, queryset = None, template_name = None, extra_context = {}):
     try:
         tags = Tag.objects.filter(name__in = slug.split('+'))
     except Tag.DoesNotExist:
         raise Http404
 
-    return object_list(
-        request,
-        queryset = TaggedItem.objects.get_by_model(GeneralPost.objects.published(), tags),
-        extra_context = {'tags': tags})
+    if queryset is None:
+        queryset = GeneralPost.objects.published()
+
+    extra_context_ = extra_context.copy()
+    extra_context_['tags'] = tags
+
+    # Magic starts here.
+    # I am mangling with queryset's model
+    # attribute to make 'tagging' belive
+    # that it is operates on GeneralPost type.
+    general_queryset = queryset.all()
+    general_queryset.model = GeneralPost
+
+    tagged_queryset = TaggedItem.objects.get_by_model(general_queryset, tags)
+    tagged_queryset.model = queryset.model
+    # End of magic.
+
+    kwargs = {
+        'queryset': tagged_queryset,
+        'extra_context': extra_context_,
+    }
+    if template_name is not None:
+        kwargs['template_name'] = template_name
+
+    return object_list(request, **kwargs)
