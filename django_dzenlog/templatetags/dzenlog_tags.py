@@ -62,10 +62,10 @@ class RenderNode(Node):
 
     def render(self, context):
         object = self.object_name.resolve(context)
-        bytag_view_name = Variable('bytag_page_name').resolve(context)
 
         def bytag_url(tag_name):
-            return reverse(bytag_view_name, kwargs=dict(slug=tag_name))
+            view_name = Variable('bytag_page_name').resolve(context)
+            return reverse(view_name, kwargs=dict(slug=tag_name))
 
         return object.render(bytag_url=bytag_url)
 

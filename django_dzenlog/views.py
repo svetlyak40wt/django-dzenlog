@@ -3,7 +3,7 @@ from django.views.generic.list_detail import object_list
 
 from tagging.models import Tag, TaggedItem
 
-from models import GeneralPost
+from models import GeneralPost, published
 
 
 def bytag(request, slug, queryset = None, template_name = None, extra_context = {}):
@@ -13,7 +13,7 @@ def bytag(request, slug, queryset = None, template_name = None, extra_context = 
         raise Http404
 
     if queryset is None:
-        queryset = GeneralPost.objects.published()
+        queryset = published(GeneralPost.objects.all())
 
     extra_context_ = extra_context.copy()
     extra_context_['tags'] = tags

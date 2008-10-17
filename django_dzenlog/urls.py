@@ -1,28 +1,65 @@
-from django.conf.urls.defaults import *
-from models import GeneralPost
+from pdb import set_trace
+
+from django.core.urlresolvers import reverse
+from django.conf.urls.defaults import patterns
+from django.db.models import get_model
+
+from models import GeneralPost, published
 from feeds import latest
 
-post_list = {
-    'queryset': GeneralPost.objects.published(),
-    'extra_context': {
-        'bytag_page_name': 'dzenlog-post-bytag',
+def create_patterns(model, url_prefix=None):
+    if isinstance(model, basestring):
+        app_name, model_name = model.split('.')
+        model = get_model(app_name, model_name)
+
+    if url_prefix is None:
+        url_prefix = ''
+    else:
+        if url_prefix[-1] != '/':
+            url_prefix += '/'
+
+    module_name = model._meta.module_name
+    bytag_page_name = 'dzenlog-%s-bytag' % module_name
+    list_page_name = 'dzenlog-%s-list' % module_name
+    details_page_name = 'dzenlog-%s-details' % module_name
+    feeds_page_name = 'dzenlog-%s-feeds' % module_name
+
+    all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
+
+    def feeds_url(url):
+        return reverse(feeds_page_name, kwargs=dict(url=url))
+
+    def all_feeds_url(url):
+        return reverse(all_feeds_page_name, kwargs=dict(url=url))
+
+    object_list = {
+        'queryset': published(model._default_manager.all()),
+        'template_name': 'django_dzenlog/generalpost_list.html',
+        'extra_context': {
+            'bytag_page_name': bytag_page_name,
+            'feeds_url': lambda: feeds_url,
+            'all_feeds_url': lambda: all_feeds_url,
+        }
     }
-}
 
-feeds = {
-    'all': latest(GeneralPost, 'dzenlog-post-list'),
-}
+    object_info = object_list.copy()
+    object_info['template_name'] = 'django_dzenlog/generalpost_detail.html'
 
-urlpatterns = patterns('django_dzenlog.views',
-   (r'^bytag/(?P<slug>.+)/$', 'bytag', post_list, 'dzenlog-post-bytag'),
-)
+    feeds = {
+        'rss': latest(model, list_page_name),
+    }
+    urlpatterns = patterns('django_dzenlog.views',
+       (r'^%sbytag/(?P<slug>.+)/$' % url_prefix, 'bytag', object_list, bytag_page_name),
+    )
+    urlpatterns += patterns('django.views.generic',
+        (r'^%s(?P<slug>[a-z0-9-]+)/$' % url_prefix, 'list_detail.object_detail', object_info, details_page_name),
+        (r'^%s$' % url_prefix, 'list_detail.object_list', object_list, list_page_name),
+    )
+    # feeds
+    urlpatterns += patterns('django.contrib.syndication.views',
+        (r'^%sfeeds/(?P<url>.*)/$' % url_prefix, 'feed', {'feed_dict': feeds}, feeds_page_name),
+    )
+    return urlpatterns
 
-urlpatterns += patterns('django.views.generic',
-   (r'^(?P<slug>[a-z0-9-]+)/$', 'list_detail.object_detail', post_list, 'dzenlog-post-details'),
-   (r'^$', 'list_detail.object_list', post_list, 'dzenlog-post-list'),
-)
 
-urlpatterns += patterns('django.contrib.syndication.views',
-   (r'^rss/(?P<url>.*)/$', 'feed', {'feed_dict': feeds}, 'dzenlog-feeds'),
-)
-
+urlpatterns = create_patterns('django_dzenlog.GeneralPost')

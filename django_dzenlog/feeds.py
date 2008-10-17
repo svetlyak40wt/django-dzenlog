@@ -1,10 +1,12 @@
+from pdb import set_trace
+
 from django.contrib.syndication.feeds import FeedDoesNotExist, Feed
 from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 import settings
 
-from models import GeneralPost
+from models import GeneralPost, published
 from utils import upcast
 
 def latest(cls, list_url_name):
@@ -15,7 +17,7 @@ def latest(cls, list_url_name):
             return reverse(list_url_name)
 
         def items(self):
-            return cls.objects.published()[:20]
+            return published(cls.objects.all())[:20]
 
         def item_pubdate(self, item):
             return item.publish_at

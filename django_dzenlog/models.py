@@ -4,6 +4,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 from django.template.loader import render_to_string
+from django.core.urlresolvers import reverse, NoReverseMatch
 
 import settings
 from pdb import set_trace
@@ -15,9 +16,8 @@ if settings.HAS_TAGGING:
 
 from utils import upcast, virtual
 
-class GeneralPostManager(models.Manager):
-    def published(self):
-        return self.filter(publish_at__lte=datetime.today())
+def published(queryset):
+    return queryset.filter(publish_at__lte=datetime.today())
 
 class GeneralPost(models.Model):
     author      = models.ForeignKey(User)
@@ -38,8 +38,6 @@ class GeneralPost(models.Model):
 
         def get_tags(self, *args, **kwargs):
             return Tag.objects.get_for_object(self._downcast())
-
-    objects = GeneralPostManager()
 
     def __unicode__(self):
         return self.title
@@ -66,13 +64,12 @@ class GeneralPost(models.Model):
                 self._get_template(),
                 dict(object=upcast(self), settings=settings, for_feed=True, **kwargs))
 
-    @models.permalink
     def get_absolute_url(self):
-        return self._get_absolute_url()
-
-    @virtual
-    def _get_absolute_url(self):
-        return ('dzenlog-post-details', (), dict(slug=self.slug))
+        try:
+            obj = upcast(self)
+            return reverse('dzenlog-%s-details' % obj._meta.module_name, kwargs=dict(slug=self.slug))
+        except NoReverseMatch:
+            return reverse('dzenlog-%s-details' % self._meta.module_name, kwargs=dict(slug=self.slug))
 
     def save(self):
         today = datetime.today()

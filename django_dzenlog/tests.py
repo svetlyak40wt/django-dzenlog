@@ -124,17 +124,17 @@ class PostsPublicity(TestCase):
                  ).save()
 
     def testInHtml(self):
-        response = self.client.get(reverse('dzenlog-post-list'))
+        response = self.client.get(reverse('dzenlog-generalpost-list'))
         self.assertContains(response, 'First post')
         self.assertNotContains(response, 'Second post')
 
     def testInRss(self):
-        response = self.client.get(reverse('dzenlog-feeds', kwargs=dict(url='all')))
+        response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(url='rss')))
         self.assertContains(response, 'First post')
         self.assertNotContains(response, 'Second post')
 
     def testByTag(self):
-        response = self.client.get(reverse('dzenlog-post-bytag', kwargs=dict(slug='one')))
+        response = self.client.get(reverse('dzenlog-generalpost-bytag', kwargs=dict(slug='one')))
         self.assertContains(response, 'First post')
         self.assertNotContains(response, 'Second post')
 
