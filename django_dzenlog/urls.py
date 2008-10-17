@@ -26,6 +26,9 @@ def create_patterns(model, url_prefix=None):
 
     all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
 
+    def bytag_url(tag_name):
+        return reverse(bytag_page_name, kwargs=dict(slug=tag_name))
+
     def feeds_url(url):
         return reverse(feeds_page_name, kwargs=dict(url=url))
 
@@ -36,7 +39,7 @@ def create_patterns(model, url_prefix=None):
         'queryset': published(model._default_manager.all()),
         'template_name': 'django_dzenlog/generalpost_list.html',
         'extra_context': {
-            'bytag_page_name': bytag_page_name,
+            'bytag_url': lambda: bytag_url,
             'feeds_url': lambda: feeds_url,
             'all_feeds_url': lambda: all_feeds_url,
         }

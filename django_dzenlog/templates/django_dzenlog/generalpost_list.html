@@ -9,6 +9,6 @@
 
 {% block content %}
     {% for object in object_list %}
-        {% render object %}
+        {% call object.render bytag_url=bytag_url %}
     {% endfor %}
 {% endblock %}

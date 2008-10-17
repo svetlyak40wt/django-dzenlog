@@ -7,14 +7,22 @@ from pdb import set_trace
 register = Library()
 
 class CallNode(Node):
-    def __init__(self, func_name, args, kwargs, asvar):
+    def __init__(self, args, kwargs, asvar, func_name=None, obj_name=None, method_name=None):
         self.func_name = func_name
+        self.obj_name = obj_name
+        self.method_name = method_name
         self.args = args 
         self.kwargs = kwargs
         self.asvar = asvar
 
     def render(self, context):
-        func = self.func_name.resolve(context)
+        if self.func_name is not None:
+            func = self.func_name.resolve(context)
+        else:
+            obj = self.obj_name.resolve(context)
+            #method = self.method_name.resolve(context)
+            func = getattr(obj, self.method_name)
+
         args = [arg.resolve(context) for arg in self.args]
         kwargs = dict([(smart_str(k,'ascii'), v.resolve(context))
                        for k, v in self.kwargs.items()])
@@ -31,8 +39,13 @@ def call(parser, token):
     bits = token.contents.split(' ')
     if len(bits) < 2:
         raise TemplateSyntaxError("'%s' takes at least one argument"
-                                  " (path to a view)" % bits[0])
-    func_name = Variable(bits[1])
+                                  " (function's name)" % bits[0])
+
+    if '.' in bits[1]:
+        obj_name, method_name = bits[1].split('.')
+        names = dict(obj_name = Variable(obj_name), method_name = method_name)
+    else:
+        names = dict(func_name = Variable(bits[1]))
 
     args = []
     kwargs = {}
@@ -52,28 +65,6 @@ def call(parser, token):
                         kwargs[k] = parser.compile_filter(v)
                     elif arg:
                         args.append(parser.compile_filter(arg))
-    return CallNode(func_name, args, kwargs, asvar)
+    return CallNode(args, kwargs, asvar, **names)
 call = register.tag(call)
 
-
-class RenderNode(Node):
-    def __init__(self, object_name):
-        self.object_name = object_name
-
-    def render(self, context):
-        object = self.object_name.resolve(context)
-
-        def bytag_url(tag_name):
-            view_name = Variable('bytag_page_name').resolve(context)
-            return reverse(view_name, kwargs=dict(slug=tag_name))
-
-        return object.render(bytag_url=bytag_url)
-
-def render(parser, token):
-    bits = token.contents.split(' ')
-    if len(bits) != 2:
-        raise TemplateSyntaxError("'%s' takes one argument"
-                                  " (object's name)" % bits[0])
-    object_name = Variable(bits[1])
-    return RenderNode(object_name)
-render = register.tag(render)

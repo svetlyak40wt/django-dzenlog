@@ -143,3 +143,25 @@ class TemplateTags(TestCase):
         t = get_template_from_string('''{% load dzenlog_tags %}{% call blah minor %}''')
         ctx = Context(dict(blah=lambda x: x, minor='test'))
         self.assertEqual('test', t.render(ctx))
+
+    def testMethod(self):
+        class Test:
+            def blah(self, x):
+                return x
+
+        t = get_template_from_string('''{% load dzenlog_tags %}{% call obj.blah minor %}''')
+        ctx = Context(dict(obj=Test(), minor='test'))
+        self.assertEqual('test', t.render(ctx))
+
+    def testFunctionNotFound(self):
+        from django.template import TemplateSyntaxError
+        t = get_template_from_string('''{% load dzenlog_tags %}{% call blah minor %}''')
+        ctx = Context(dict(minor='test'))
+        self.assertRaises(TemplateSyntaxError, t.render, ctx)
+
+    def testObjectNotFound(self):
+        from django.template import TemplateSyntaxError
+        t = get_template_from_string('''{% load dzenlog_tags %}{% call obj.blah minor %}''')
+        ctx = Context(dict(minor='test'))
+        self.assertRaises(TemplateSyntaxError, t.render, ctx)
+
