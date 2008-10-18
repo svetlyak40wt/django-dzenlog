@@ -14,6 +14,9 @@ if settings.HAS_TAGGING:
     from tagging.fields import TagField
     from tagging.models import Tag
 
+if settings.HAS_MULTILINGUAL:
+    import multilingual
+
 
 from utils import upcast, virtual
 
@@ -22,7 +25,13 @@ def published(queryset):
 
 class GeneralPost(models.Model):
     author      = models.ForeignKey(User)
-    title       = models.CharField(_('Title'), max_length=100)
+
+    if settings.HAS_MULTILINGUAL:
+        class Translation(multilingual.Translation):
+            title       = models.CharField(_('Title'), max_length=100)
+    else:
+        title       = models.CharField(_('Title'), max_length=100)
+
     slug        = models.SlugField(_('Slug title'), max_length=100, unique=True)
     created_at  = models.DateTimeField(_('Create date'), blank=True, editable=False)
     updated_at  = models.DateTimeField(_('Update date'), blank=True, editable=False)
@@ -85,8 +94,12 @@ class GeneralPost(models.Model):
 
         result = super(GeneralPost, self).save()
 
+        # Emulate 'post_save' calls
         if settings.HAS_TAGGING:
             self._save_tags()
+
+        if settings.HAS_MULTILINGUAL:
+            multilingual.translation.translation_save_translated_fields(self)
 
         return result
 

@@ -6,7 +6,7 @@ class GeneralPostAdmin(admin.ModelAdmin):
     if settings.HAS_TAGGING:
         list_display.append('tags')
 
-    prepopulated_fields = {
-        'slug': ('title',)
-    }
+#    prepopulated_fields = {
+#        'slug': ('title',)
+#    }
 

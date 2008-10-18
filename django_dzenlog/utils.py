@@ -1,3 +1,4 @@
+from pdb import set_trace
 from django.db.models.query import CollectedObjects
 
 
@@ -9,7 +10,12 @@ def upcast(obj):
     except AttributeError:
         sub_objects = CollectedObjects()
         obj._collect_sub_objects(sub_objects)
-        child = sub_objects.items()[0][1].values()[0]
+
+        for child in sub_objects.items():
+            if issubclass(child[0], obj.__class__):
+                break
+
+        child = child[1].values()[0]
         setattr(obj, '_upcast_result', child)
         setattr(child, '_upcast_result', child)
         return child

@@ -13,7 +13,7 @@ from tagging.models import Tag
 from tagging.fields import TagField
 
 from django_dzenlog.models import GeneralPost
-from django_dzenlog.settings import HAS_TAGGING
+from django_dzenlog.settings import HAS_TAGGING, HAS_MULTILINGUAL
 
 
 class Parent(models.Model): pass
@@ -22,6 +22,8 @@ class Child2(Parent): pass
 
 
 class TestPost(GeneralPost): pass
+
+TestPost._meta.translation_model = GeneralPost._meta.translation_model
 
 if HAS_TAGGING:
     class Tagging(TestCase):
@@ -225,4 +227,35 @@ class Feeds(TestCase):
             response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='+'.join(tags))))
             for tag in tags:
                 self.assertContains(response, tag)
+
+
+if HAS_MULTILINGUAL:
+    from multilingual.languages import set_default_language
+
+    class Multilingual(TestCase):
+        def setUp(self):
+            (self.author, created) = User.objects.get_or_create(username='tester')
+            TestPost.objects.all().delete()
+
+        def testAddInternationalPost(self):
+            title_en = 'Post title in english'
+            title_ru = 'Post title in russian'
+
+            TestPost(author=self.author,
+                     title_en=title_en,
+                     title_ru=title_ru,
+                     slug='first',
+                     publish_at=datetime.today() - timedelta(0, 60)
+                     ).save()
+
+            response = self.client.get(reverse('dzenlog-generalpost-details', kwargs=dict(slug='first')))
+            self.assertContains(response, title_en)
+            self.assertNotContains(response, title_ru)
+
+            response = self.client.get(
+                    reverse('dzenlog-generalpost-details', kwargs=dict(slug='first')),
+                    **{'Accept-Language': 'ru'})
+            self.assertNotContains(response, title_en)
+            self.assertContains(response, title_ru)
+
 

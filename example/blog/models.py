@@ -7,6 +7,7 @@ class TextPost(GeneralPost):
 
     def _get_template(self):
         return 'blog/text_post.html'
+TextPost._meta.translation_model = GeneralPost._meta.translation_model
 
 
 class LinkPost(GeneralPost):
@@ -15,4 +16,5 @@ class LinkPost(GeneralPost):
 
     def _get_template(self):
         return 'blog/link_post.html'
+LinkPost._meta.translation_model = GeneralPost._meta.translation_model
 
