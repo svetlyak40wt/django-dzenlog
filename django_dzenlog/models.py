@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 
 from django.db import models
@@ -38,6 +39,11 @@ class GeneralPost(models.Model):
 
         def get_tags(self, *args, **kwargs):
             return Tag.objects.get_for_object(self._downcast())
+    else:
+        def __init__(self, *args, **kwargs):
+            if kwargs.pop('tags', None) is not None:
+                logging.getLogger('django_dzenlog').warning('Tagging is not supported, add "tagging" into the INSTALLED_APPS.')
+            super(GeneralPost, self).__init__(*args, **kwargs)
 
     def __unicode__(self):
         return self.title

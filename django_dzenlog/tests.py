@@ -5,13 +5,15 @@ from django.test import TestCase
 from django.db import models
 from django.dispatch import Signal
 from django.contrib.auth.models import User
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.template import Context
 from django.template.loader import get_template_from_string
 
 from tagging.models import Tag
 from tagging.fields import TagField
+
 from django_dzenlog.models import GeneralPost
+from django_dzenlog.settings import HAS_TAGGING
 
 
 class Parent(models.Model): pass
@@ -21,39 +23,40 @@ class Child2(Parent): pass
 
 class TestPost(GeneralPost): pass
 
-class Tagging(TestCase):
-    def setUp(self):
-        (self.author, created) = User.objects.get_or_create(username='tester')
+if HAS_TAGGING:
+    class Tagging(TestCase):
+        def setUp(self):
+            (self.author, created) = User.objects.get_or_create(username='tester')
 
-    def testSettingTags(self):
-        p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
-        p.save()
+        def testSettingTags(self):
+            p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
+            p.save()
 
-        p2 = GeneralPost.objects.get(id=p.id)
-        self.assertEqual('one, two, three', p2.tags)
+            p2 = GeneralPost.objects.get(id=p.id)
+            self.assertEqual('one, two, three', p2.tags)
 
-        tags = Tag.objects.get_for_object(p2)
-        self.assertEqual(3, len(tags))
+            tags = Tag.objects.get_for_object(p2)
+            self.assertEqual(3, len(tags))
 
-    def testUpdateTags(self):
-        p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
-        p.save()
+        def testUpdateTags(self):
+            p = TestPost(author=self.author, title='test', slug='test', tags='one, two, three')
+            p.save()
 
-        tags = p.get_tags()
-        self.assertEqual(3, len(tags))
+            tags = p.get_tags()
+            self.assertEqual(3, len(tags))
 
-        p.tags = ''
-        p.save()
+            p.tags = ''
+            p.save()
 
-        tags = p.get_tags()
-        self.assertEqual(0, len(tags))
+            tags = p.get_tags()
+            self.assertEqual(0, len(tags))
 
-        p.tags = 'blah'
-        p.save()
+            p.tags = 'blah'
+            p.save()
 
-        tags = p.get_tags()
-        self.assertEqual(1, len(tags))
-        self.assertEqual('blah', tags[0].name)
+            tags = p.get_tags()
+            self.assertEqual(1, len(tags))
+            self.assertEqual('blah', tags[0].name)
 
 from django.contrib.contenttypes.models import ContentType
 from utils import upcast
@@ -133,10 +136,14 @@ class PostsPublicity(TestCase):
         self.assertContains(response, 'First post')
         self.assertNotContains(response, 'Second post')
 
-    def testByTag(self):
-        response = self.client.get(reverse('dzenlog-generalpost-bytag', kwargs=dict(slug='one')))
-        self.assertContains(response, 'First post')
-        self.assertNotContains(response, 'Second post')
+    if HAS_TAGGING:
+        def testByTag(self):
+            response = self.client.get(reverse('dzenlog-generalpost-bytag', kwargs=dict(slug='one')))
+            self.assertContains(response, 'First post')
+            self.assertNotContains(response, 'Second post')
+    else:
+        def testHasNoByTag(self):
+            self.assertRaises(NoReverseMatch, reverse, 'dzenlog-generalpost-bytag', kwargs=dict(slug='one'))
 
 class TemplateTags(TestCase):
     def testCall(self):
