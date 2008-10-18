@@ -21,6 +21,10 @@ def latest(cls, list_url_name):
                 return get_tagged(bits[0], published(cls.objects.all()))
             return None
 
+        def categories(self, obj):
+            if obj and len(obj) == 2:
+                return obj[1]
+
         def link(self):
             return reverse(list_url_name)
 

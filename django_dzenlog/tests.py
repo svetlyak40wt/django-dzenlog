@@ -163,6 +163,7 @@ class PostsPublicity(TestCase):
     else:
         def testHasNoByTag(self):
             self.assertRaises(NoReverseMatch, reverse, 'dzenlog-generalpost-bytag', kwargs=dict(slug='one'))
+            self.assertRaises(NoReverseMatch, reverse, 'dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='one'))
 
 class TemplateTags(TestCase):
     def testCall(self):
@@ -203,8 +204,25 @@ class Feeds(TestCase):
                  publish_at=datetime.today() - timedelta(0, 60)
                  ).save()
 
-    def testPostCategoriesInRss(self):
-        response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(slug='rss', param='')))
-        self.assertContains(response, 'first-tag')
-        self.assertContains(response, 'second-tag')
+    if HAS_TAGGING:
+        def testPostCategoriesInRss(self):
+            response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(slug='rss', param='')))
+            self.assertContains(response, 'first-tag')
+            self.assertContains(response, 'second-tag')
+
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='first-tag')))
+            self.assertContains(response, 'first-tag')
+            self.assertContains(response, 'second-tag')
+
+        def testRequestedCategoriesInRss(self):
+            TestPost(author=self.author,
+                     title='Second post',
+                     slug='second',
+                     tags='another-tag',
+                     ).save()
+
+            tags = ['first-tag', 'another-tag']
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='+'.join(tags))))
+            for tag in tags:
+                self.assertContains(response, tag)
 
