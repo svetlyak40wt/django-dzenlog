@@ -191,3 +191,20 @@ class TemplateTags(TestCase):
         ctx = Context(dict(minor='test'))
         self.assertRaises(TemplateSyntaxError, t.render, ctx)
 
+class Feeds(TestCase):
+    def setUp(self):
+        (self.author, created) = User.objects.get_or_create(username='tester')
+        TestPost.objects.all().delete()
+
+        TestPost(author=self.author,
+                 title='First post',
+                 slug='first',
+                 tags='first-tag, second-tag',
+                 publish_at=datetime.today() - timedelta(0, 60)
+                 ).save()
+
+    def testPostCategoriesInRss(self):
+        response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(slug='rss', param='')))
+        self.assertContains(response, 'first-tag')
+        self.assertContains(response, 'second-tag')
+

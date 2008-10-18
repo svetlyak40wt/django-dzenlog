@@ -37,8 +37,7 @@ def latest(cls, list_url_name):
 
         def item_categories(self, item):
             if settings.HAS_TAGGING:
-                from tagging.models import Tag
-                return Tag.objects.get_for_object(upcast(item))
+                return item.get_tags()
     return PostsFeed
 
 LatestPosts = latest(GeneralPost, 'dzenlog-post-list')
