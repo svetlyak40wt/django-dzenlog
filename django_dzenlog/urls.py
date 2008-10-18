@@ -21,12 +21,14 @@ def create_patterns(model, url_prefix=None):
 
     module_name = model._meta.module_name
     bytag_page_name = 'dzenlog-%s-bytag' % module_name
+    tags_page_name = 'dzenlog-%s-tags' % module_name
     list_page_name = 'dzenlog-%s-list' % module_name
     details_page_name = 'dzenlog-%s-details' % module_name
     feeds_page_name = 'dzenlog-%s-feeds' % module_name
     feeds_bytag_page_name = 'dzenlog-%s-bytag-feeds' % module_name
     all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
 
+    #TODO use DRY principle
     def feeds_url(*args,**kwargs):
         kwargs.setdefault('param', '')
         return reverse(feeds_page_name, args=args, kwargs=kwargs)
@@ -67,9 +69,19 @@ def create_patterns(model, url_prefix=None):
 
     if HAS_TAGGING:
         bytag_object_list = object_list.copy()
-        bytag_object_list['extra_context'] = bytag_object_list['extra_context'].copy()
+        bytag_object_list['extra_context'] = object_list['extra_context'].copy()
         bytag_object_list['extra_context']['feeds_url'] = lambda: bytag_feeds_url
 
+        from tagging.models import Tag, TaggedItem
+        tag_list = {
+            'queryset': Tag.objects.all(),
+            'template_name': 'django_dzenlog/tag_list.html',
+            'extra_context': extra_context,
+        }
+
+        urlpatterns += patterns('django.views.generic',
+            (r'^%sbytag/$' % url_prefix, 'list_detail.object_list', tag_list, tags_page_name),
+        )
         urlpatterns += patterns('django_dzenlog.views',
            (r'^%sbytag/(?P<slug>[^/]+)/$' % url_prefix, 'bytag', bytag_object_list, bytag_page_name),
         )

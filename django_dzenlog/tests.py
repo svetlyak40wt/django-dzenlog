@@ -22,6 +22,7 @@ class Child2(Parent): pass
 
 
 class TestPost(GeneralPost): pass
+class TestPost2(GeneralPost): pass
 
 if HAS_TAGGING:
     class Tagging(TestCase):
@@ -224,5 +225,30 @@ class Feeds(TestCase):
             tags = ['first-tag', 'another-tag']
             response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='+'.join(tags))))
             for tag in tags:
+                self.assertContains(response, tag)
+
+if HAS_TAGGING:
+    class ByTags(TestCase):
+        def setUp(self):
+            (self.author, created) = User.objects.get_or_create(username='tester')
+            TestPost.objects.all().delete()
+
+            TestPost(author=self.author,
+                     title='First post',
+                     slug='first',
+                     tags='one, two',
+                     publish_at=datetime.today() - timedelta(0, 60)
+                     ).save()
+
+            TestPost2(author=self.author,
+                     title='Second post',
+                     slug='second',
+                     tags='three, four',
+                     publish_at=datetime.today() - timedelta(0, 60)
+                     ).save()
+
+        def testPostCategoriesInRss(self):
+            response = self.client.get(reverse('dzenlog-generalpost-tags'))
+            for tag in ['one', 'two', 'three', 'four']:
                 self.assertContains(response, tag)
 
