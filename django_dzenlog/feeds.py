@@ -8,15 +8,25 @@ import settings
 
 from models import GeneralPost, published
 from utils import upcast
+from views import get_tagged
 
 def latest(cls, list_url_name):
     class PostsFeed(Feed):
         title = _('Latest posts')
 
+        def get_object(self, bits):
+            if len(bits) > 1:
+                raise ObjectDoesNotExist
+            if bits:
+                return get_tagged(bits[0], published(cls.objects.all()))
+            return None
+
         def link(self):
             return reverse(list_url_name)
 
-        def items(self):
+        def items(self, obj):
+            if obj:
+                return obj[0][:20]
             return published(cls.objects.all())[:20]
 
         def item_pubdate(self, item):

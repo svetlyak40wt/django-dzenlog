@@ -24,13 +24,20 @@ def create_patterns(model, url_prefix=None):
     list_page_name = 'dzenlog-%s-list' % module_name
     details_page_name = 'dzenlog-%s-details' % module_name
     feeds_page_name = 'dzenlog-%s-feeds' % module_name
+    feeds_bytag_page_name = 'dzenlog-%s-bytag-feeds' % module_name
     all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
 
-    def feeds_url(url):
-        return reverse(feeds_page_name, kwargs=dict(url=url))
+    def feeds_url(*args,**kwargs):
+        kwargs.setdefault('param', '')
+        return reverse(feeds_page_name, args=args, kwargs=kwargs)
 
-    def all_feeds_url(url):
-        return reverse(all_feeds_page_name, kwargs=dict(url=url))
+    def bytag_feeds_url(*args,**kwargs):
+        kwargs.setdefault('param', '')
+        return reverse(feeds_bytag_page_name, args=args, kwargs=kwargs)
+
+    def all_feeds_url(*args, **kwargs):
+        kwargs.setdefault('param', '')
+        return reverse(all_feeds_page_name, args=args, kwargs=kwargs)
 
     extra_context = {
         'feeds_url': lambda: feeds_url,
@@ -54,13 +61,22 @@ def create_patterns(model, url_prefix=None):
     feeds = {
         'rss': latest(model, list_page_name),
     }
-    urlpatterns = patterns('django.contrib.syndication.views',
-        (r'^%sfeeds/(?P<url>.*)/$' % url_prefix, 'feed', {'feed_dict': feeds}, feeds_page_name),
+    urlpatterns = patterns('django_dzenlog.views',
+        (r'^%s(?P<slug>rss)(?P<param>)/$' % url_prefix, 'feed', {'feed_dict': feeds}, feeds_page_name),
     )
+
     if HAS_TAGGING:
+        bytag_object_list = object_list.copy()
+        bytag_object_list['extra_context'] = bytag_object_list['extra_context'].copy()
+        bytag_object_list['extra_context']['feeds_url'] = lambda: bytag_feeds_url
+
         urlpatterns += patterns('django_dzenlog.views',
-           (r'^%sbytag/(?P<slug>.+)/$' % url_prefix, 'bytag', object_list, bytag_page_name),
+           (r'^%sbytag/(?P<slug>[^/]+)/$' % url_prefix, 'bytag', bytag_object_list, bytag_page_name),
         )
+        urlpatterns += patterns('django_dzenlog.views',
+            (r'^%sbytag/(?P<param>[^/]+)/(?P<slug>rss)/$' % url_prefix, 'feed', {'feed_dict': feeds}, feeds_bytag_page_name),
+        )
+
     urlpatterns += patterns('django.views.generic',
         (r'^%s(?P<slug>[a-z0-9-]+)/$' % url_prefix, 'list_detail.object_detail', object_info, details_page_name),
         (r'^%s$' % url_prefix, 'list_detail.object_list', object_list, list_page_name),

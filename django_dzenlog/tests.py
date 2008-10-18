@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from pdb import set_trace
 
 from django.test import TestCase
@@ -118,7 +118,7 @@ class PostsPublicity(TestCase):
                  title='First post',
                  slug='first',
                  tags='one, two',
-                 publish_at=datetime.today()
+                 publish_at=datetime.today() - timedelta(0, 60)
                  ).save()
         TestPost(author=self.author,
                  title='Second post',
@@ -132,7 +132,7 @@ class PostsPublicity(TestCase):
         self.assertNotContains(response, 'Second post')
 
     def testInRss(self):
-        response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(url='rss')))
+        response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(slug='rss', param='')))
         self.assertContains(response, 'First post')
         self.assertNotContains(response, 'Second post')
 
@@ -141,6 +141,25 @@ class PostsPublicity(TestCase):
             response = self.client.get(reverse('dzenlog-generalpost-bytag', kwargs=dict(slug='one')))
             self.assertContains(response, 'First post')
             self.assertNotContains(response, 'Second post')
+
+        def testRssByTag(self):
+            TestPost(author=self.author,
+                     title='Third post',
+                     slug='third',
+                     tags='three, four',
+                     publish_at=datetime.today() - timedelta(0, 60)
+                     ).save()
+
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='one')))
+            self.assertContains(response, 'First post')
+            self.assertNotContains(response, 'Second post')
+            self.assertNotContains(response, 'Third post')
+
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='three')))
+            self.assertNotContains(response, 'First post')
+            self.assertNotContains(response, 'Second post')
+            self.assertContains(response, 'Third post')
+
     else:
         def testHasNoByTag(self):
             self.assertRaises(NoReverseMatch, reverse, 'dzenlog-generalpost-bytag', kwargs=dict(slug='one'))

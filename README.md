@@ -37,7 +37,6 @@ descriptions.
 TODO
 ----
 
-* Add separate feeds for tags and types with tags.
 * Add caching.
 * Add support for django-multilingual in the title and tags.
 

@@ -1,12 +1,12 @@
 from django.http import Http404
 from django.views.generic.list_detail import object_list
+from django.contrib.syndication.views import feed as syndication_feed
 
 from tagging.models import Tag, TaggedItem
 
 from models import GeneralPost, published
 
-
-def bytag(request, slug, queryset = None, template_name = None, extra_context = {}):
+def get_tagged(slug, queryset = None):
     try:
         tags = Tag.objects.filter(name__in = slug.split('+'))
     except Tag.DoesNotExist:
@@ -14,9 +14,6 @@ def bytag(request, slug, queryset = None, template_name = None, extra_context = 
 
     if queryset is None:
         queryset = published(GeneralPost.objects.all())
-
-    extra_context_ = extra_context.copy()
-    extra_context_['tags'] = tags
 
     # Magic starts here.
     # I am mangling with queryset's model
@@ -28,12 +25,28 @@ def bytag(request, slug, queryset = None, template_name = None, extra_context = 
     tagged_queryset = TaggedItem.objects.get_by_model(general_queryset, tags)
     tagged_queryset.model = queryset.model
     # End of magic.
+    return tagged_queryset, tags
+
+
+def bytag(request, slug, queryset = None, template_name = None, extra_context = {}):
+    queryset, tags = get_tagged(slug, queryset)
+
+    extra_context_ = extra_context.copy()
+    extra_context_['tags'] = tags
+    extra_context_['tags_slug'] = slug
 
     kwargs = {
-        'queryset': tagged_queryset,
+        'queryset': queryset,
         'extra_context': extra_context_,
     }
     if template_name is not None:
         kwargs['template_name'] = template_name
 
     return object_list(request, **kwargs)
+
+
+def feed(request, slug, param = None, feed_dict = None):
+    url = slug
+    if param is not None:
+        url += '/' + param
+    return syndication_feed(request, url, feed_dict)
