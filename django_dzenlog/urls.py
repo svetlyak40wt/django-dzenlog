@@ -2,11 +2,15 @@ from pdb import set_trace
 
 from django.core.urlresolvers import reverse
 from django.conf.urls.defaults import patterns
+from django.conf import settings
 from django.db.models import get_model
+from django.db import connection
 
 from models import GeneralPost, published
 from settings import HAS_TAGGING
 from feeds import latest
+
+qn = connection.ops.quote_name
 
 def create_patterns(model, url_prefix=None):
     if isinstance(model, basestring):
@@ -68,23 +72,41 @@ def create_patterns(model, url_prefix=None):
     )
 
     if HAS_TAGGING:
+        def calc_tag_cloud():
+            from tagging.models import Tag, TaggedItem
+            queryset = GeneralPost.objects.all()
+            if model != GeneralPost:
+                model_table = model._meta.db_table
+                queryset = queryset.extra(
+                                where=['id = %s.generalpost_ptr_id' % qn(model_table)],
+                                tables=[model_table])
+            ids = (obj.pk for obj in queryset)
+            return Tag.objects.cloud_for_model(
+                    GeneralPost,
+                    min_count = getattr(settings, 'DZENLOG_TAGCLOUD_MINCOUNT', 0),
+                    steps = getattr(settings, 'DZENLOG_TAGCLOUD_STEPS', 4),
+                    filters = {'pk__in': ids}
+                    )
+
+        tag_cloud_data = {
+            'template': 'django_dzenlog/tag_list.html',
+            'extra_context': object_list['extra_context'].copy(),
+        }
+        tag_cloud_data['extra_context']['object_list'] = calc_tag_cloud
+
+        urlpatterns += patterns('django.views.generic',
+            (r'^%sbytag/$' % url_prefix, 'simple.direct_to_template', tag_cloud_data, tags_page_name),
+        )
+
+
         bytag_object_list = object_list.copy()
         bytag_object_list['extra_context'] = object_list['extra_context'].copy()
         bytag_object_list['extra_context']['feeds_url'] = lambda: bytag_feeds_url
 
-        from tagging.models import Tag, TaggedItem
-        tag_list = {
-            'queryset': Tag.objects.all(),
-            'template_name': 'django_dzenlog/tag_list.html',
-            'extra_context': extra_context,
-        }
-
-        urlpatterns += patterns('django.views.generic',
-            (r'^%sbytag/$' % url_prefix, 'list_detail.object_list', tag_list, tags_page_name),
-        )
         urlpatterns += patterns('django_dzenlog.views',
            (r'^%sbytag/(?P<slug>[^/]+)/$' % url_prefix, 'bytag', bytag_object_list, bytag_page_name),
         )
+
         urlpatterns += patterns('django_dzenlog.views',
             (r'^%sbytag/(?P<param>[^/]+)/(?P<slug>rss)/$' % url_prefix, 'feed', {'feed_dict': feeds}, feeds_bytag_page_name),
         )

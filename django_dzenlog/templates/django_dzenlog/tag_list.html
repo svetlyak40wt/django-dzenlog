@@ -8,8 +8,10 @@
 {% endblock %}
 
 {% block content %}
-    {% for object in object_list %}
-        {{object}}
+    <div class="b-tag-cloud">
+    {% for tag in object_list %}
+        <a class="fs-{{tag.font_size}}" href="{% call bytag_url tag.name %}">{{tag.name}}</a>
     {% endfor %}
+    </div>
 {% endblock %}
 
