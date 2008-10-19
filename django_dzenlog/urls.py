@@ -32,22 +32,15 @@ def create_patterns(model, url_prefix=None):
     feeds_bytag_page_name = 'dzenlog-%s-bytag-feeds' % module_name
     all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
 
-    #TODO use DRY principle
-    def feeds_url(*args,**kwargs):
-        kwargs.setdefault('param', '')
-        return reverse(feeds_page_name, args=args, kwargs=kwargs)
-
-    def bytag_feeds_url(*args,**kwargs):
-        kwargs.setdefault('param', '')
-        return reverse(feeds_bytag_page_name, args=args, kwargs=kwargs)
-
-    def all_feeds_url(*args, **kwargs):
-        kwargs.setdefault('param', '')
-        return reverse(all_feeds_page_name, args=args, kwargs=kwargs)
+    def feeds_url(page_name):
+        def func(*args,**kwargs):
+            kwargs.setdefault('param', '')
+            return reverse(page_name, args=args, kwargs=kwargs)
+        return lambda: func
 
     extra_context = {
-        'feeds_url': lambda: feeds_url,
-        'all_feeds_url': lambda: all_feeds_url,
+        'feeds_url': feeds_url(feeds_page_name),
+        'all_feeds_url': feeds_url(all_feeds_page_name),
     }
 
     if HAS_TAGGING:
@@ -101,7 +94,7 @@ def create_patterns(model, url_prefix=None):
 
         bytag_object_list = object_list.copy()
         bytag_object_list['extra_context'] = object_list['extra_context'].copy()
-        bytag_object_list['extra_context']['feeds_url'] = lambda: bytag_feeds_url
+        bytag_object_list['extra_context']['feeds_url'] = feeds_url(feeds_bytag_page_name)
 
         urlpatterns += patterns('django_dzenlog.views',
            (r'^%sbytag/(?P<slug>[^/]+)/$' % url_prefix, 'bytag', bytag_object_list, bytag_page_name),
