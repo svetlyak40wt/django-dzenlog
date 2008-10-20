@@ -8,7 +8,11 @@
 {% endblock %}
 
 {% block content %}
-    {% for object in object_list %}
-        {% call object.render bytag_url=bytag_url %}
-    {% endfor %}
+    {% if object_list %}
+        {% for object in object_list %}
+            {% call object.render bytag_url=bytag_url %}
+        {% endfor %}
+    {% else %}
+        <p>{% trans 'This blog is empty.' %}</p>
+    {% endif %}
 {% endblock %}
