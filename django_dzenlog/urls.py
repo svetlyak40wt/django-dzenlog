@@ -1,6 +1,6 @@
 from pdb import set_trace
 
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, NoReverseMatch
 from django.conf.urls.defaults import patterns
 from django.conf import settings
 from django.db.models import get_model
@@ -22,7 +22,7 @@ def create_patterns(model, url_prefix=None):
     if url_prefix is None:
         url_prefix = ''
     else:
-        if url_prefix[-1] != '/':
+        if url_prefix and url_prefix[-1] != '/':
             url_prefix += '/'
 
     module_name = model._meta.module_name
@@ -34,15 +34,20 @@ def create_patterns(model, url_prefix=None):
     feeds_bytag_page_name = 'dzenlog-%s-bytag-feeds' % module_name
     all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
 
-    def feeds_url(page_name):
+    def feeds_url(page_name, fallback_page_name = None):
         def func(*args,**kwargs):
             kwargs.setdefault('param', '')
-            return reverse(page_name, args=args, kwargs=kwargs)
+            try:
+                return reverse(page_name, args=args, kwargs=kwargs)
+            except NoReverseMatch:
+                if fallback_page_name:
+                    return reverse(fallback_page_name, args=args, kwargs=kwargs)
+                return ''
         return lambda: func
 
     extra_context = {
         'feeds_url': feeds_url(feeds_page_name),
-        'all_feeds_url': feeds_url(all_feeds_page_name),
+        'all_feeds_url': feeds_url(all_feeds_page_name, feeds_page_name),
     }
 
     if HAS_TAGGING:
