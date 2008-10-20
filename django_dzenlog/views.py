@@ -13,7 +13,9 @@ def get_tagged(slug, queryset = None):
         raise Http404
 
     if queryset is None:
-        queryset = published(GeneralPost.objects.all())
+        queryset = GeneralPost.objects.all()
+
+    queryset = published(queryset)
 
     # Magic starts here.
     # I am mangling with queryset's model
@@ -42,6 +44,10 @@ def bytag(request, slug, queryset = None, template_name = None, extra_context = 
     if template_name is not None:
         kwargs['template_name'] = template_name
 
+    return object_list(request, **kwargs)
+
+def post_list(request, **kwargs):
+    kwargs['queryset'] = published(kwargs['queryset'])
     return object_list(request, **kwargs)
 
 

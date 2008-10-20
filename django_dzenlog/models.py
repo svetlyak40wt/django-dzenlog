@@ -18,7 +18,7 @@ if settings.HAS_TAGGING:
 from utils import upcast, virtual
 
 def published(queryset):
-    return queryset.filter(publish_at__lte=datetime.today())
+    return queryset.filter(publish_at__lte=datetime.now())
 
 class GeneralPost(models.Model):
     author      = models.ForeignKey(User)
