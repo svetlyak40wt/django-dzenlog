@@ -1,0 +1,89 @@
+# Russian translation for django-dzenlog
+# Copyright (C) 2008, Alexander Artemenko
+# This file is distributed under the same license as the django-dzenlog package.
+# Alexander Artmeneko <svetlyak.40wt@gmail.com>, 2008.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: django-dzenlog 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-10-20 07:26-0500\n"
+"PO-Revision-Date: 2008-10-20 00:00+MSK\n"
+"Last-Translator: Alexander Artemenko <svetlyak.40wt@gmail.com>\n"
+"Language-Team: ru <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: feeds.py:15
+msgid "Latest posts"
+msgstr "Последние посты"
+
+#: models.py:25
+msgid "Title"
+msgstr "Заголовок"
+
+#: models.py:26
+msgid "Slug title"
+msgstr "Сокращенный заголовок"
+
+#: models.py:27
+msgid "Create date"
+msgstr "Дата создания"
+
+#: models.py:28
+msgid "Update date"
+msgstr "Дата обновления"
+
+#: models.py:29
+msgid "Publish date"
+msgstr "Дата публикации"
+
+#: models.py:30
+msgid "Comments On"
+msgstr "Комментарии разрешены"
+
+#: models.py:55
+msgid "Post"
+msgstr "Пост"
+
+#: models.py:56
+msgid "Posts"
+msgstr "Посты"
+
+#: templates/base.html:18
+msgid "Dzenlog example"
+msgstr "Dzenlog пример"
+
+#: templates/django_dzenlog/generalpost.html:9
+#, python-format
+msgid "Published at %(publish_at)s, author %(author)s"
+msgstr "Опубликовано %(publish_at)s, автор %(author)s"
+
+#: templates/django_dzenlog/generalpost.html:12
+msgid "Tags:"
+msgstr "Теги:"
+
+#: templates/django_dzenlog/generalpost.html:25
+msgid "Post's content"
+msgstr "Содержимое поста"
+
+#: templates/django_dzenlog/generalpost_detail.html:6
+#: templates/django_dzenlog/generalpost_list.html:6
+#: templates/django_dzenlog/tag_list.html:6
+msgid "All posts"
+msgstr "Все посты"
+
+#: templates/django_dzenlog/generalpost_detail.html:7
+msgid "Posts with this type"
+msgstr "Посты этого типа"
+
+#: templates/django_dzenlog/generalpost_list.html:7
+#: templates/django_dzenlog/tag_list.html:7
+msgid "Posts with this type and tags"
+msgstr "Посты с таким типом и тегами"
+
+#: templates/django_dzenlog/generalpost_list.html:16
+msgid "This blog is empty."
+msgstr "Этот блог пуст."
