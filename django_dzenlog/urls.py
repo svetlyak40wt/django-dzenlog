@@ -16,6 +16,8 @@ def create_patterns(model, url_prefix=None):
     if isinstance(model, basestring):
         app_name, model_name = model.split('.')
         model = get_model(app_name, model_name)
+        if model is None:
+            raise Exception('Model %r not found in app %r' % (model_name, app_name))
 
     if url_prefix is None:
         url_prefix = ''

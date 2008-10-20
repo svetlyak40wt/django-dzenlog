@@ -252,3 +252,9 @@ if HAS_TAGGING:
             for tag in ['one', 'two', 'three', 'four']:
                 self.assertContains(response, tag)
 
+
+class URLConf(TestCase):
+    def testRaiseExceptionOnUnknownModel(self):
+        from urls import create_patterns
+        self.assertRaises(Exception, create_patterns, 'blah.minor')
+
