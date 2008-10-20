@@ -14,8 +14,8 @@ need is to describe details, specific to you particular blog.
 
 For example, for can create a blog with two post types: textual
 posts and links to internet resources. In that case, all you need
-is to define two models: TextPost and LinkPost. Each of these
-models should be derived from django_dzenlog.models.GeneralPost.
+is to define two models: `TextPost` and `LinkPost`. Each of these
+models should be derived from `django_dzenlog.models.GeneralPost`.
 
 Features
 ========
@@ -29,8 +29,8 @@ Features
 Installation
 ============
 
-* Place django_dzenlog somewhere in the PYTHONPATH.
-* Add django_dzenlog to you INSTALLED_APPS.
+* Place `django_dzenlog` somewhere in the `PYTHONPATH`.
+* Add `django_dzenlog` to you `INSTALLED_APPS`.
 * Inherit you models from django_dzenlog.models.GeneralPost.
   You can find few examples in the 'example' project.
 * Run `./manage.py syncdb` to create database tables.
@@ -38,8 +38,8 @@ Installation
 
 Optionally, you can set these params in the settings.py:
 
-* DZENLOG_TAGCLOUD_MINCOUNT, minimum count of tagged objects (default 0).
-* DZENLOG_TAGCLOUD_STEPS, tag cloud's level count (default 4).
+* `DZENLOG_TAGCLOUD_MINCOUNT`, minimum count of tagged objects (default 0).
+* `DZENLOG_TAGCLOUD_STEPS`, tag cloud's level count (default 4).
 
 Examples
 ========
