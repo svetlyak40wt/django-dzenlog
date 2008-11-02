@@ -1,0 +1,24 @@
+{% load i18n %}
+<html>
+    <head>
+        <title>{% block title %}Dzenlog example{% endblock %}</title>
+        <style>
+        .l-header h1 {font-size: 2em;}
+        .l-content h1 {font-size: 1.5em;}
+        .l-content h2 {font-size: 1.3em;}
+        .b-tag-cloud .fs-1 {font-size: 2em;}
+        .b-tag-cloud .fs-2 {font-size: 3em;}
+        .b-tag-cloud .fs-3 {font-size: 4em;}
+        .b-tag-cloud .fs-4 {font-size: 5em;}
+        </style>
+        {% block head %}{% endblock %}
+    </head>
+    <body>
+        <div class="l-header">
+            <h1><a href="/">{% trans 'Dzenlog example' %}</a></h1>
+        </div>
+        <div class="l-content">
+            {% block content %}{% endblock %}
+        </div>
+    </body>
+</html>
