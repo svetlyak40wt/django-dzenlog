@@ -10,7 +10,7 @@
 {% block content %}
     {% if object_list %}
         {% for object in object_list %}
-            {% call object.render bytag_url=bytag_url %}
+            {% call object.render bytag_url=bytag_url,list_view=1 %}
         {% endfor %}
     {% else %}
         <p>{% trans 'This blog is empty.' %}</p>

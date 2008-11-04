@@ -36,6 +36,17 @@ class CallNode(Node):
             return result
 
 def call(parser, token):
+    '''
+    Call function or object's method and, optionally,
+    place result into the context variable.
+
+    Examples:
+        {% call obj.get_absolute_url as abs_url %}
+        {% call obj.some_method 42, var='test' %}
+
+    If you don't pass an output variable's name, then result
+    will be on the tag's output.
+    '''
     bits = token.contents.split(' ')
     if len(bits) < 2:
         raise TemplateSyntaxError("'%s' takes at least one argument"

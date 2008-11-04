@@ -2,5 +2,5 @@
 {% load dzenlog_tags %}
 
 {% block content %}
-    {% call object.render bytag_url=bytag_url %}
+    {% call object.render bytag_url=bytag_url,detailed_view=1 %}
 {% endblock %}
