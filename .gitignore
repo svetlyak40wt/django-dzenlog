@@ -2,3 +2,5 @@
 .*.swp
 local_settings.py
 .ropeproject
+dist
+django_dzenlog.egg-info
