@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'django-dzenlog',
-    version = '0.1.0',
+    version = '0.1.1',
     description = '''Django Dzenlog is a set of models and templates, which can be '''
                   '''used to create blogs with different kinds media.''',
     long_description = '''
@@ -47,6 +47,10 @@ Features
         'Programming Language :: Python',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
-    packages = find_packages(),
+    packages = find_packages(exclude=['example*']),
+    package_data = {
+        'templates': ['*.html'],
+    },
+    include_package_data = True,
 )
 
