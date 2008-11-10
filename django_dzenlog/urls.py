@@ -34,8 +34,13 @@ def create_patterns(model, url_prefix=None):
     feeds_bytag_page_name = 'dzenlog-%s-bytag-feeds' % module_name
     all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
 
-    def feeds_url(page_name, fallback_page_name = None):
+    def feeds_url(page_name, fallback_page_name = None, settings_param = None):
         def func(*args,**kwargs):
+            if settings_param is not None:
+                from_settings = getattr(settings, settings_param, None)
+                if from_settings is not None:
+                    return from_settings
+
             kwargs.setdefault('param', '')
             try:
                 return reverse(page_name, args=args, kwargs=kwargs)
@@ -47,7 +52,7 @@ def create_patterns(model, url_prefix=None):
 
     extra_context = {
         'feeds_url': feeds_url(feeds_page_name),
-        'all_feeds_url': feeds_url(all_feeds_page_name, feeds_page_name),
+        'all_feeds_url': feeds_url(all_feeds_page_name, feeds_page_name, 'DZENLOG_ALL_POSTS_FEED'),
     }
 
     if HAS_TAGGING:
