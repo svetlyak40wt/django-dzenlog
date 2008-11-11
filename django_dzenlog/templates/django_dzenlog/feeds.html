@@ -1,0 +1,32 @@
+{% load i18n dzenlog_tags %}
+
+{% block feed_links %}
+{% call all_feeds_url slug="rss" as feed_url_for_all_posts %}
+<link rel="alternate" type="application/rss+xml" title="{% trans "All posts" %}" href="{{ feed_url_for_all_posts }}" />
+{% if tags %}
+    {% with tags|length as tags_count %}
+        {% ifnotequal tags_count 1 %}
+            <link rel="alternate" type="application/rss+xml" title="{% blocktrans %}Posts with this type and tags '{{tags_slug}}'{% endblocktrans %}" href="{% call bytag_feeds_url slug="rss", param=tags_slug %}" />
+        {% endifnotequal %}
+    {% endwith %}
+
+    {% for tag in tags %}
+        <link rel="alternate" type="application/rss+xml" title="{% blocktrans %}Posts with this type and tag '{{tag}}'{% endblocktrans %}" href="{% call bytag_feeds_url slug="rss", param=tag %}" />
+    {% endfor %}
+{% else %}
+    {% call feeds_url slug="rss", param=tags_slug as feed_url_for_type %}
+    {% ifnotequal feed_url_for_type feed_url_for_all_posts %}
+        <link rel="alternate" type="application/rss+xml" title="{% trans "Posts with this type" %}" href="{{ feed_url_for_type }}" />
+    {% endifnotequal %}
+
+    {% if object and object.tags %}
+        {% for tag in object.get_tags %}
+            {% ifequal feed_url_for_type feed_url_for_all_posts %}
+                <link rel="alternate" type="application/rss+xml" title="{% blocktrans %}All posts with tag '{{tag}}'{% endblocktrans %}" href="{% call bytag_feeds_url slug="rss", param=tag %}" />
+            {% else %}
+                <link rel="alternate" type="application/rss+xml" title="{% blocktrans %}Posts with this type and tag '{{tag}}'{% endblocktrans %}" href="{% call bytag_feeds_url slug="rss", param=tag %}" />
+            {% endifequal %}
+        {% endfor %}
+    {% endif %}
+{% endif %}
+{% endblock %}

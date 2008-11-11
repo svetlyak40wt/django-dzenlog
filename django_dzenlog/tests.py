@@ -133,7 +133,7 @@ class PostsPublicity(TestCase):
         self.assertNotContains(response, 'Second post')
 
     def testInRss(self):
-        response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(slug='rss', param='')))
+        response = self.client.get(reverse('dzenlog-generalpost-feed', kwargs=dict(slug='rss', param='')))
         self.assertContains(response, 'First post')
         self.assertNotContains(response, 'Second post')
 
@@ -151,12 +151,12 @@ class PostsPublicity(TestCase):
                      publish_at=datetime.today() - timedelta(0, 60)
                      ).save()
 
-            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='one')))
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feed', kwargs=dict(slug='rss', param='one')))
             self.assertContains(response, 'First post')
             self.assertNotContains(response, 'Second post')
             self.assertNotContains(response, 'Third post')
 
-            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='three')))
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feed', kwargs=dict(slug='rss', param='three')))
             self.assertNotContains(response, 'First post')
             self.assertNotContains(response, 'Second post')
             self.assertContains(response, 'Third post')
@@ -164,7 +164,7 @@ class PostsPublicity(TestCase):
     else:
         def testHasNoByTag(self):
             self.assertRaises(NoReverseMatch, reverse, 'dzenlog-generalpost-bytag', kwargs=dict(slug='one'))
-            self.assertRaises(NoReverseMatch, reverse, 'dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='one'))
+            self.assertRaises(NoReverseMatch, reverse, 'dzenlog-generalpost-bytag-feed', kwargs=dict(slug='rss', param='one'))
 
 class TemplateTags(TestCase):
     def testCall(self):
@@ -207,11 +207,11 @@ class Feeds(TestCase):
 
     if HAS_TAGGING:
         def testPostCategoriesInRss(self):
-            response = self.client.get(reverse('dzenlog-generalpost-feeds', kwargs=dict(slug='rss', param='')))
+            response = self.client.get(reverse('dzenlog-generalpost-feed', kwargs=dict(slug='rss', param='')))
             self.assertContains(response, 'first-tag')
             self.assertContains(response, 'second-tag')
 
-            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='first-tag')))
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feed', kwargs=dict(slug='rss', param='first-tag')))
             self.assertContains(response, 'first-tag')
             self.assertContains(response, 'second-tag')
 
@@ -223,7 +223,7 @@ class Feeds(TestCase):
                      ).save()
 
             tags = ['first-tag', 'another-tag']
-            response = self.client.get(reverse('dzenlog-generalpost-bytag-feeds', kwargs=dict(slug='rss', param='+'.join(tags))))
+            response = self.client.get(reverse('dzenlog-generalpost-bytag-feed', kwargs=dict(slug='rss', param='+'.join(tags))))
             for tag in tags:
                 self.assertContains(response, tag)
 

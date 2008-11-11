@@ -1,10 +1,9 @@
 {% extends 'django_dzenlog/base.html' %}
-{% load i18n dzenlog_tags %}
+{% load i18n dzenlog_tags lazy_tags %}
 
 {% block head %}
     {{ block.super }}
-    <link rel="alternate" type="application/rss+xml" title="{% trans "All posts" %}" href="{% call all_feeds_url slug="rss" %}" />
-    <link rel="alternate" type="application/rss+xml" title="{% trans "Posts with this type and tags" %}" href="{% call feeds_url slug="rss", param=tags_slug %}" />
+    {% include 'django_dzenlog/feeds.html' %}
 {% endblock %}
 
 {% block content %}

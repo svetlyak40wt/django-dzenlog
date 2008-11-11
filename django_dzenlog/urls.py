@@ -30,16 +30,21 @@ def create_patterns(model, url_prefix=None):
     tags_page_name = 'dzenlog-%s-tags' % module_name
     list_page_name = 'dzenlog-%s-list' % module_name
     details_page_name = 'dzenlog-%s-details' % module_name
-    feeds_page_name = 'dzenlog-%s-feeds' % module_name
-    feeds_bytag_page_name = 'dzenlog-%s-bytag-feeds' % module_name
-    all_feeds_page_name = 'dzenlog-%s-feeds' % GeneralPost._meta.module_name
+    feeds_page_name = 'dzenlog-%s-feed' % module_name
+    feeds_bytag_page_name = 'dzenlog-%s-bytag-feed' % module_name
+    all_feeds_page_name = 'dzenlog-%s-feed' % GeneralPost._meta.module_name
 
-    def feeds_url(page_name, fallback_page_name = None, settings_param = None):
+    def feeds_url(page_name, fallback_page_name = None):
         def func(*args,**kwargs):
-            if settings_param is not None:
-                from_settings = getattr(settings, settings_param, None)
-                if from_settings is not None:
-                    return from_settings
+            print 'resolving %r with args %r, %r' % (page_name, args, kwargs)
+            def get_from_settings(name):
+                if name is not None:
+                    settings_param = name.upper().replace('-', '_')
+                    return getattr(settings, settings_param, None)
+
+            from_settings = get_from_settings(page_name) or get_from_settings(fallback_page_name)
+            if from_settings is not None:
+                return from_settings
 
             kwargs.setdefault('param', '')
             try:
@@ -51,8 +56,9 @@ def create_patterns(model, url_prefix=None):
         return lambda: func
 
     extra_context = {
+        'bytag_feeds_url': feeds_url(feeds_bytag_page_name),
         'feeds_url': feeds_url(feeds_page_name),
-        'all_feeds_url': feeds_url(all_feeds_page_name, feeds_page_name, 'DZENLOG_ALL_POSTS_FEED'),
+        'all_feeds_url': feeds_url(all_feeds_page_name, feeds_page_name),
     }
 
     if HAS_TAGGING:
@@ -104,13 +110,8 @@ def create_patterns(model, url_prefix=None):
             (r'^%sbytag/$' % url_prefix, 'simple.direct_to_template', tag_cloud_data, tags_page_name),
         )
 
-
-        bytag_object_list = object_list.copy()
-        bytag_object_list['extra_context'] = object_list['extra_context'].copy()
-        bytag_object_list['extra_context']['feeds_url'] = feeds_url(feeds_bytag_page_name)
-
         urlpatterns += patterns('django_dzenlog.views',
-           (r'^%sbytag/(?P<slug>[^/]+)/$' % url_prefix, 'bytag', bytag_object_list, bytag_page_name),
+           (r'^%sbytag/(?P<slug>[^/]+)/$' % url_prefix, 'bytag', object_list, bytag_page_name),
         )
 
         urlpatterns += patterns('django_dzenlog.views',
