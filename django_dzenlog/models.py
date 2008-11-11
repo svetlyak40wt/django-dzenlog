@@ -63,19 +63,22 @@ class GeneralPost(models.Model):
     def _get_template(self):
         return 'django_dzenlog/generalpost.html'
 
+    def upcast(self):
+        return upcast(self)
+
     def render(self, **kwargs):
         return render_to_string(
                 self._get_template(),
-                dict(object=upcast(self), settings=settings, **kwargs))
+                dict(object=self.upcast(), settings=settings, **kwargs))
 
     def render_feed(self, **kwargs):
         return render_to_string(
                 self._get_template(),
-                dict(object=upcast(self), settings=settings, for_feed=True, **kwargs))
+                dict(object=self.upcast(), settings=settings, for_feed=True, **kwargs))
 
     def get_absolute_url(self):
         try:
-            obj = upcast(self)
+            obj = self.upcast()
             return reverse('dzenlog-%s-details' % obj._meta.module_name, kwargs=dict(slug=self.slug))
         except NoReverseMatch:
             return reverse('dzenlog-%s-details' % self._meta.module_name, kwargs=dict(slug=self.slug))
