@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = 'django-dzenlog',
-    version = '0.1.3',
+    version = '0.1.4',
     description = '''Django Dzenlog is a set of models and templates, which can be '''
                   '''used to create blogs with different kinds media.''',
     long_description = '''
@@ -38,7 +38,7 @@ Features
     url = 'http://github.com/svetlyak40wt/django-dzenlog/',
     install_requires = ['Django>=1.0'],
     extras_require = {
-        'tagging': ['tagging>=3.0-pre'],
+        'tagging': ['tagging>=0.3-pre'],
     },
     dependency_links = ['http://pypi.aartemenko.com', 'http://aartemenko.com/media/packages.html'],
     classifiers=[
