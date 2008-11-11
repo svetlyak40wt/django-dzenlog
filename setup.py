@@ -40,7 +40,7 @@ Features
     extras_require = {
         'tagging': ['tagging>=3.0-pre'],
     },
-    dependency_links = ['http://aartemenko.com/media/packages.html'],
+    dependency_links = ['http://pypi.aartemenko.com', 'http://aartemenko.com/media/packages.html'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Environment :: Plugins',
