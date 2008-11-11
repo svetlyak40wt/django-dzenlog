@@ -33,12 +33,12 @@ class GeneralPost(models.Model):
         tags    = TagField()
 
         def _save_tags(self, *args, **kwargs):
-            instance = self._downcast()
+            instance = self.downcast()
             setattr(instance, '_tags_cache', self._tags_cache)
             self._meta.get_field('tags')._save(instance=instance)
 
         def get_tags(self, *args, **kwargs):
-            return Tag.objects.get_for_object(self._downcast())
+            return Tag.objects.get_for_object(self.downcast())
     else:
         def __init__(self, *args, **kwargs):
             if kwargs.pop('tags', None) is not None:
@@ -48,7 +48,7 @@ class GeneralPost(models.Model):
     def __unicode__(self):
         return self.title
 
-    def _downcast(self):
+    def downcast(self):
         return getattr(self, 'generalpost_ptr', self)
 
     class Meta:
