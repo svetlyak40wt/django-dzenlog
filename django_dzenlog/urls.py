@@ -36,7 +36,6 @@ def create_patterns(model, url_prefix=None):
 
     def feeds_url(page_name, fallback_page_name = None):
         def func(*args,**kwargs):
-            print 'resolving %r with args %r, %r' % (page_name, args, kwargs)
             def get_from_settings(name):
                 if name is not None:
                     settings_param = name.upper().replace('-', '_')
