@@ -5,7 +5,11 @@
         {% block title %}<h1><a href="{{object.get_absolute_url}}">{{object.title}}</a></h1>{% endblock %}
 
         {% block meta %}
-        <p class="b-meta">
+        <div class="b-meta">
+            {% ifequal object.author user %}
+                <div class="btns"><a href="{{ object.get_edit_url }}">edit</a></div>
+            {% endifequal %}
+            <p>
             {% blocktrans with object.author as author and object.publish_at|naturalday as publish_at %}Published at {{publish_at}}, author {{author}}{% endblocktrans %}.
             {% if settings.HAS_TAGGING %}
                 {% with object.get_tags as object_tags %}
@@ -17,7 +21,8 @@
                     {% endif %}
                 {% endwith %}
             {% endif %}
-        </p>
+            </p>
+        </div>
         {% endblock %}
     {% endif %}
 

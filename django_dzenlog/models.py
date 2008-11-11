@@ -56,6 +56,9 @@ class GeneralPost(models.Model):
         verbose_name_plural = _('Posts')
         ordering = ('-publish_at',)
 
+    def get_edit_url(self):
+        return reverse('admin-root', args = ['/'.join((self._meta.app_label, self._meta.module_name, unicode(self.id)))])
+
     @virtual
     def _get_template(self):
         return 'django_dzenlog/generalpost.html'
