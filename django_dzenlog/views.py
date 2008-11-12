@@ -6,11 +6,11 @@ from tagging.models import Tag, TaggedItem
 
 from models import GeneralPost, published
 
-def get_tagged(slug, queryset = None):
-    try:
-        tags = Tag.objects.filter(name__in = slug.split('+'))
-    except Tag.DoesNotExist:
-        raise Http404
+def get_tags_by_slug(slug):
+    return Tag.objects.filter(name__in = slug.split('+'))
+
+def get_tagged(slug, queryset = None, tags = None):
+    tags = tags or get_tags_by_slug(slug)
 
     if queryset is None:
         queryset = GeneralPost.objects.all()
