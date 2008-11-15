@@ -73,6 +73,13 @@ Here all templates with their's default values:
     # Post's body for RSS feed
     feed_description_template = 'django_dzenlog/feed_description.html'
 
+Also, you can override `django_dzenlog/base.html` to define you own
+look and feel. But don't forget to include `django_dzenlog/feeds.html`
+to activate automagical feed link generation.
+
+    {% include 'django_dzenlog/feeds.html' %}
+
+
 Examples
 ========
 
