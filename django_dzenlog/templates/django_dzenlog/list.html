@@ -4,7 +4,9 @@
 {% block content %}
     {% if object_list %}
         {% for object in object_list %}
-            {% include object.body_list_template %}
+            {% with object.upcast as object %}
+                {% include object.body_list_template %}
+            {% endwith %}
         {% endfor %}
     {% else %}
         <p>{% trans 'There is no any posts.' %}</p>
