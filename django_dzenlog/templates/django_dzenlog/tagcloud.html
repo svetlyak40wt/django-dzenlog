@@ -1,11 +1,6 @@
 {% extends 'django_dzenlog/base.html' %}
 {% load i18n dzenlog_tags %}
 
-{% block head %}
-    {{ block.super }}
-    {% include 'django_dzenlog/feeds.html' %}
-{% endblock %}
-
 {% block content %}
     <div class="b-tag-cloud">
     {% for tag in object_list %}

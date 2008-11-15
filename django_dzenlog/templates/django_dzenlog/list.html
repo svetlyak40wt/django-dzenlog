@@ -1,0 +1,12 @@
+{% extends 'django_dzenlog/base.html' %}
+{% load i18n dzenlog_tags %}
+
+{% block content %}
+    {% if object_list %}
+        {% for object in object_list %}
+            {% include object.body_list_template %}
+        {% endfor %}
+    {% else %}
+        <p>{% trans 'There is no any posts.' %}</p>
+    {% endif %}
+{% endblock %}

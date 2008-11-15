@@ -81,7 +81,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.sites',
     'django.contrib.admin',
-    'django.contrib.humanize'
+    'django.contrib.humanize',
     'django_dzenlog',
     'blog',
     'debug_toolbar',

@@ -21,6 +21,16 @@ def published(queryset):
     return queryset.filter(publish_at__lte=datetime.now())
 
 class GeneralPost(models.Model):
+    # templates
+    list_template             = 'django_dzenlog/list.html'
+    detail_template           = 'django_dzenlog/detail.html'
+    tagcloud_template         = 'django_dzenlog/tagcloud.html'
+    body_detail_template      = 'django_dzenlog/body_detail.html'
+    body_list_template        = 'django_dzenlog/body_list.html'
+    feed_title_template       = 'django_dzenlog/feed_title.html'
+    feed_description_template = 'django_dzenlog/feed_description.html'
+
+    # fields
     author      = models.ForeignKey(User)
     title       = models.CharField(_('Title'), max_length=100)
     slug        = models.SlugField(_('Slug title'), max_length=100, unique=True)
@@ -59,22 +69,8 @@ class GeneralPost(models.Model):
     def get_edit_url(self):
         return reverse('admin-root', args = ['/'.join((self._meta.app_label, self._meta.module_name, unicode(self.id)))])
 
-    @virtual
-    def _get_template(self):
-        return 'django_dzenlog/generalpost.html'
-
     def upcast(self):
         return upcast(self)
-
-    def render(self, **kwargs):
-        return render_to_string(
-                self._get_template(),
-                dict(object=self.upcast(), settings=settings, **kwargs))
-
-    def render_feed(self, **kwargs):
-        return render_to_string(
-                self._get_template(),
-                dict(object=self.upcast(), settings=settings, for_feed=True, **kwargs))
 
     def get_absolute_url(self):
         try:

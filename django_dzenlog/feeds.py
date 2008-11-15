@@ -13,6 +13,9 @@ from views import get_tagged, get_tags_by_slug
 
 def latest(cls, list_url_name):
     class PostsFeed(Feed):
+        title_template       = 'feeds/dzenlog_post_title.html'
+        description_template = 'feeds/dzenlog_post_description.html'
+
         def __init__(self, *args, **kwargs):
             self.tags = None
             super(PostsFeed, self).__init__(*args, **kwargs)
@@ -26,10 +29,10 @@ def latest(cls, list_url_name):
 
             if self.tags:
                 if len(self.tags) == 1:
-                    params['tag'] = '"%s"' % self.tags[0]
+                    params['tag'] = u'"%s"' % self.tags[0]
                     retval = _('%(site_name)s: latest %(post_type)s with tag %(tag)s')
                 else:
-                    params['tags'] = ', '.join('"%s"' % tag for tag in self.tags)
+                    params['tags'] = u', '.join(u'"%s"' % tag for tag in self.tags)
                     retval = _('%(site_name)s: latest %(post_type)s with tags %(tags)s')
             return retval % params
 
@@ -50,8 +53,10 @@ def latest(cls, list_url_name):
 
         def items(self, obj):
             if obj:
-                return obj[0][:20]
-            return published(cls.objects.all())[:20]
+                items = obj[0][:20]
+            else:
+                items = published(cls.objects.all())[:20]
+            return [obj.upcast() for obj in items]
 
         def item_pubdate(self, item):
             return item.publish_at

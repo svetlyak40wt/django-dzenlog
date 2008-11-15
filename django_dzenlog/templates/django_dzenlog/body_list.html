@@ -1,0 +1,19 @@
+{% load i18n dzenlog_tags humanize %}
+
+<div class="b-article">
+    {% block title %}<h1><a href="{{object.get_absolute_url}}">{{object.title}}</a></h1>{% endblock %}
+
+    {% block meta %}
+        {% blocktrans with object.author as author and object.publish_at|naturalday as publish_at %}Published at {{publish_at}}, author {{author}}{% endblocktrans %}.
+        {% if has_tagging %}
+            {% with object.get_tags as object_tags %}
+                {% if object_tags %}{% trans 'Tags:' %}
+
+                    {% for tag in object_tags %}
+                        <a href="{% call bytag_url tag.name %}">{{tag.name}}</a>{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        {% endif %}
+    {% endblock %}
+</div>

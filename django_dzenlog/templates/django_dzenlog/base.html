@@ -11,7 +11,10 @@
         .b-tag-cloud .fs-3 {font-size: 4em;}
         .b-tag-cloud .fs-4 {font-size: 5em;}
         </style>
-        {% block head %}{% endblock %}
+        {% block head %}
+            {{ block.super }}
+            {% include 'django_dzenlog/feeds.html' %}
+        {% endblock %}
     </head>
     <body>
         <div class="l-header">

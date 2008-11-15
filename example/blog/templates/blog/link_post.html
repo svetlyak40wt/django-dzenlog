@@ -1,6 +1,6 @@
-{% extends 'django_dzenlog/generalpost.html' %}
+{% extends 'django_dzenlog/body_detail.html' %}
 
-{% block content %}
+{% block post-content %}
     <a href="{{ object.url }}">{{ object.url }}</a>
     <p>{{ object.description|safe }}</p>
 {% endblock %}

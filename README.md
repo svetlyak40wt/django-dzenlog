@@ -50,6 +50,29 @@ For example, you can tell dzenlog, that your feeds are on the feedburner:
 But that does not changes URLs of real feeds, and they will be able at /blog/rss/
 and /text/rss/. These settings are affect on HTML generation only.
 
+Templates
+=========
+
+In your models you can override these class variables, to set
+templates for entry rendering in different sutuations.
+
+Here all templates with their's default values:
+
+    # Render post list
+    list_template             = 'django_dzenlog/list.html'
+    # Render post with it's details (tags, comments, etc.)
+    detail_template           = 'django_dzenlog/detail.html'
+    # Render tag cloud (if you has 'tagging' app enabled.)
+    tagcloud_template         = 'django_dzenlog/tagcloud.html'
+    # Post's body for detailed view.
+    body_detail_template      = 'django_dzenlog/body_detail.html'
+    # Post's body for list view (for example it can omit full article's text)
+    body_list_template        = 'django_dzenlog/body_list.html'
+    # Post's title for RSS feed
+    feed_title_template       = 'django_dzenlog/feed_title.html'
+    # Post's body for RSS feed
+    feed_description_template = 'django_dzenlog/feed_description.html'
+
 Examples
 ========
 

@@ -7,7 +7,7 @@ from django.db.models import get_model
 from django.db import connection
 
 from models import GeneralPost
-from settings import HAS_TAGGING
+import settings
 from feeds import latest
 
 qn = connection.ops.quote_name
@@ -60,19 +60,20 @@ def create_patterns(model, url_prefix=None):
         'all_feeds_url': feeds_url(all_feeds_page_name, feeds_page_name),
     }
 
-    if HAS_TAGGING:
+    if settings.HAS_TAGGING:
         def bytag_url(tag_name):
             return reverse(bytag_page_name, kwargs=dict(slug=tag_name))
         extra_context['bytag_url'] = lambda: bytag_url
+        extra_context['has_tagging'] = settings.HAS_TAGGING
 
     object_list = {
         'queryset': model._default_manager.all(),
-        'template_name': 'django_dzenlog/generalpost_list.html',
+        'template_name': model.list_template,
         'extra_context': extra_context,
     }
 
     object_info = object_list.copy()
-    object_info['template_name'] = 'django_dzenlog/generalpost_detail.html'
+    object_info['template_name'] = model.detail_template
 
     feeds = {
         'rss': latest(model, list_page_name),
@@ -82,7 +83,7 @@ def create_patterns(model, url_prefix=None):
         (r'^%s$' % url_prefix, 'post_list', object_list, list_page_name),
     )
 
-    if HAS_TAGGING:
+    if settings.HAS_TAGGING:
         def calc_tag_cloud():
             from tagging.models import Tag, TaggedItem
             queryset = GeneralPost.objects.all()
@@ -100,7 +101,7 @@ def create_patterns(model, url_prefix=None):
                     )
 
         tag_cloud_data = {
-            'template': 'django_dzenlog/tag_list.html',
+            'template': model.tagcloud_template,
             'extra_context': object_list['extra_context'].copy(),
         }
         tag_cloud_data['extra_context']['object_list'] = calc_tag_cloud
