@@ -41,6 +41,7 @@ Optionally, you can set these params in the settings.py:
 
 * `DZENLOG_TAGCLOUD_MINCOUNT`, minimum count of tagged objects (default 0).
 * `DZENLOG_TAGCLOUD_STEPS`, tag cloud's level count (default 4).
+* `DZENLOG_RSS_LENGTH`, maximum entries count in RSS feeds (default 20).
 
 Also, separate RSS feeds for different post types can be added to settings.
 For example, you can tell dzenlog, that your feeds are on the feedburner:

@@ -54,9 +54,9 @@ def latest(cls, list_url_name):
 
         def items(self, obj):
             if obj:
-                items = obj[0][:20]
+                items = obj[0][:settings.RSS_LENGTH]
             else:
-                items = published(cls.objects.all())[:20]
+                items = published(cls.objects.all())[:settings.RSS_LENGTH]
             return [obj.upcast() for obj in items]
 
         def item_pubdate(self, item):
