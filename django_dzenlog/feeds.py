@@ -70,8 +70,8 @@ def latest(cls, list_url_name):
                 return item.get_tags()
     return PostsFeed
 
-def latest_comments(cls, getters, details_page_name):
-    class CommentsFeed(Feed):
+def latest_comments(cls, comments_mixup, details_page_name):
+    class CommentsFeed(comments_mixup, Feed):
         title_template       = 'feeds/dzenlog_comment_title.html'
         description_template = 'feeds/dzenlog_comment_description.html'
 
@@ -94,18 +94,7 @@ def latest_comments(cls, getters, details_page_name):
         def link(self):
             return reverse(details_page_name, kwargs=dict(slug=self.object.slug))
 
-        def items(self, obj):
-            return getters['comments'](obj)
-
-        def item_pubdate(self, item):
-            return getters.get('pubdate', lambda i: None)(item)
-
-        def item_author_name(self, item):
-            return getters.get('author_name', lambda i: '')(item)
-
-        def item_link(self, item):
-            return getters.get('item_link', lambda i: '')(item)
-
     return CommentsFeed
 
 LatestPosts = latest(GeneralPost, 'dzenlog-post-list')
+

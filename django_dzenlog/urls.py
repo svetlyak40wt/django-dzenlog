@@ -12,7 +12,7 @@ from feeds import latest, latest_comments
 
 qn = connection.ops.quote_name
 
-def create_patterns(model, url_prefix=None, comment_getters = None):
+def create_patterns(model, url_prefix=None, comments_mixup = None):
     if isinstance(model, basestring):
         app_name, model_name = model.split('.')
         model = get_model(app_name, model_name)
@@ -84,9 +84,9 @@ def create_patterns(model, url_prefix=None, comment_getters = None):
         (r'^%s$' % url_prefix, 'post_list', object_list, list_page_name),
     )
 
-    if comment_getters:
+    if comments_mixup:
         feeds = {
-            'rss': latest_comments(model, comment_getters, details_page_name),
+            'rss': latest_comments(model, comments_mixup, details_page_name),
         }
         urlpatterns += patterns('django_dzenlog.views',
             (r'^%s(?P<param>[a-z0-9-]+)/(?P<slug>rss)/$' % url_prefix, 'feed', {'feed_dict': feeds}, comments_feed_page_name),
