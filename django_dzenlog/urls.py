@@ -8,11 +8,11 @@ from django.db import connection
 
 from models import GeneralPost
 import settings
-from feeds import latest
+from feeds import latest, latest_comments
 
 qn = connection.ops.quote_name
 
-def create_patterns(model, url_prefix=None):
+def create_patterns(model, url_prefix=None, comment_getters = None):
     if isinstance(model, basestring):
         app_name, model_name = model.split('.')
         model = get_model(app_name, model_name)
@@ -29,6 +29,7 @@ def create_patterns(model, url_prefix=None):
     bytag_page_name = 'dzenlog-%s-bytag' % module_name
     tags_page_name = 'dzenlog-%s-tags' % module_name
     list_page_name = 'dzenlog-%s-list' % module_name
+    comments_feed_page_name = 'dzenlog-%s-comments' % module_name
     details_page_name = 'dzenlog-%s-details' % module_name
     feeds_page_name = 'dzenlog-%s-feed' % module_name
     feeds_bytag_page_name = 'dzenlog-%s-bytag-feed' % module_name
@@ -82,6 +83,14 @@ def create_patterns(model, url_prefix=None):
         (r'^%s(?P<slug>rss)(?P<param>)/$' % url_prefix, 'feed', {'feed_dict': feeds}, feeds_page_name),
         (r'^%s$' % url_prefix, 'post_list', object_list, list_page_name),
     )
+
+    if comment_getters:
+        feeds = {
+            'rss': latest_comments(model, comment_getters, details_page_name),
+        }
+        urlpatterns += patterns('django_dzenlog.views',
+            (r'^%s(?P<param>[a-z0-9-]+)/(?P<slug>rss)/$' % url_prefix, 'feed', {'feed_dict': feeds}, comments_feed_page_name),
+        )
 
     if settings.HAS_TAGGING:
         def calc_tag_cloud():

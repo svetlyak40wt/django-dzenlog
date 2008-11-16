@@ -5,6 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
+from django.shortcuts import get_object_or_404
 import settings
 
 from models import GeneralPost, published
@@ -68,5 +69,43 @@ def latest(cls, list_url_name):
             if settings.HAS_TAGGING:
                 return item.get_tags()
     return PostsFeed
+
+def latest_comments(cls, getters, details_page_name):
+    class CommentsFeed(Feed):
+        title_template       = 'feeds/dzenlog_comment_title.html'
+        description_template = 'feeds/dzenlog_comment_description.html'
+
+        def __init__(self, *args, **kwargs):
+            self.object = None
+            super(CommentsFeed, self).__init__(*args, **kwargs)
+
+        title = _('%s: comments') % Site.objects.get_current().name
+
+        def get_object(self, bits):
+            if len(bits) != 1:
+                raise ObjectDoesNotExist
+            self.object = get_object_or_404(cls, slug=bits[0])
+            self.title = _(u'%(site_name)s: comments on "%(title)s"') % {
+                'title': self.object.title,
+                'site_name': Site.objects.get_current().name
+            }
+            return self.object
+
+        def link(self):
+            return reverse(details_page_name, kwargs=dict(slug=self.object.slug))
+
+        def items(self, obj):
+            return getters['comments'](obj)
+
+        def item_pubdate(self, item):
+            return getters.get('pubdate', lambda i: None)(item)
+
+        def item_author_name(self, item):
+            return getters.get('author_name', lambda i: '')(item)
+
+        def item_link(self, item):
+            return getters.get('item_link', lambda i: '')(item)
+
+    return CommentsFeed
 
 LatestPosts = latest(GeneralPost, 'dzenlog-post-list')

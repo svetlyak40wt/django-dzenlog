@@ -25,6 +25,7 @@ Features
 * Separate feed for each post type.
 * Example projects, which uses most features of this application.
 * Tagging support.
+* Custom comments support.
 
 Installation
 ============
@@ -78,6 +79,11 @@ look and feel. But don't forget to include `django_dzenlog/feeds.html`
 to activate automagical feed link generation.
 
     {% include 'django_dzenlog/feeds.html' %}
+
+Comments handling
+=================
+
+TODO: write decription.
 
 
 Examples
