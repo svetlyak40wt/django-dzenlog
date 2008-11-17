@@ -85,11 +85,11 @@ def create_patterns(model, url_prefix=None, comments_mixup = None):
     )
 
     if comments_mixup:
-        feeds = {
+        comments_feeds = {
             'rss': latest_comments(model, comments_mixup, details_page_name),
         }
         urlpatterns += patterns('django_dzenlog.views',
-            (r'^%s(?P<param>[a-z0-9-]+)/(?P<slug>rss)/$' % url_prefix, 'feed', {'feed_dict': feeds}, comments_feed_page_name),
+            (r'^%s(?P<param>[a-z0-9-]+)/(?P<slug>rss)/$' % url_prefix, 'feed', {'feed_dict': comments_feeds}, comments_feed_page_name),
         )
 
     if settings.HAS_TAGGING:
