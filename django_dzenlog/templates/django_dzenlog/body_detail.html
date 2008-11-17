@@ -1,7 +1,7 @@
 {% load i18n dzenlog_tags humanize %}
 
 <div class="b-article">
-    {% block title %}<h1><a href="{{object.get_absolute_url}}">{{object.title}}</a></h1>{% endblock %}
+    {% block title %}<h1>{{object.title}}</h1>{% endblock %}
 
     {% block meta %}
     <div class="b-meta">
