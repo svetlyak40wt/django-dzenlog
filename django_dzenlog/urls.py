@@ -7,7 +7,7 @@ from django.db.models import get_model
 from django.db import connection
 
 from models import GeneralPost
-import settings
+from django_dzenlog.settings import HAS_TAGGING
 from feeds import latest, latest_comments
 
 qn = connection.ops.quote_name
@@ -61,11 +61,11 @@ def create_patterns(model, url_prefix=None, comments_mixup = None):
         'all_feeds_url': feeds_url(all_feeds_page_name, feeds_page_name),
     }
 
-    if settings.HAS_TAGGING:
+    if HAS_TAGGING:
         def bytag_url(tag_name):
             return reverse(bytag_page_name, kwargs=dict(slug=tag_name))
         extra_context['bytag_url'] = lambda: bytag_url
-        extra_context['has_tagging'] = settings.HAS_TAGGING
+        extra_context['has_tagging'] = HAS_TAGGING
 
     object_list = {
         'queryset': model._default_manager.all(),
@@ -92,7 +92,7 @@ def create_patterns(model, url_prefix=None, comments_mixup = None):
             (r'^%s(?P<param>[a-z0-9-]+)/(?P<slug>rss)/$' % url_prefix, 'feed', {'feed_dict': comments_feeds}, comments_feed_page_name),
         )
 
-    if settings.HAS_TAGGING:
+    if HAS_TAGGING:
         def calc_tag_cloud():
             from tagging.models import Tag, TaggedItem
             queryset = GeneralPost.objects.all()

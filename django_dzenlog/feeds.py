@@ -6,7 +6,8 @@ from django.core.urlresolvers import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
 from django.shortcuts import get_object_or_404
-import settings
+
+from django_dzenlog.settings import HAS_TAGGING, RSS_LENGTH
 
 from models import GeneralPost, published
 from utils import upcast
@@ -54,9 +55,9 @@ def latest(cls, list_url_name):
 
         def items(self, obj):
             if obj:
-                items = obj[0][:settings.RSS_LENGTH]
+                items = obj[0][:RSS_LENGTH]
             else:
-                items = published(cls.objects.all())[:settings.RSS_LENGTH]
+                items = published(cls.objects.all())[:RSS_LENGTH]
             return [obj.upcast() for obj in items]
 
         def item_pubdate(self, item):
@@ -66,7 +67,7 @@ def latest(cls, list_url_name):
             return item.author
 
         def item_categories(self, item):
-            if settings.HAS_TAGGING:
+            if HAS_TAGGING:
                 return item.get_tags()
     return PostsFeed
 
