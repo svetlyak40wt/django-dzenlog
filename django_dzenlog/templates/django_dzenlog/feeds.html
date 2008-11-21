@@ -3,6 +3,18 @@
 {% block feed_links %}
 {% call all_feeds_url slug="rss" as feed_url_for_all_posts %}
 <link rel="alternate" type="application/rss+xml" title="{% trans "All posts" %}" href="{{ feed_url_for_all_posts }}" />
+
+{% if post_comments_feed_url %}
+    {% call post_comments_feed_url slug="rss",param=object.slug as feed_url_for_comments %}
+    <link rel="alternate" type="application/rss+xml" title="{% trans "Comments on this post" %}" href="{{ feed_url_for_comments }}" />
+{% endif %}
+
+{% if all_comments_feed_url %}
+    {% call all_comments_feed_url slug="rss" as feed_url_for_comments %}
+    <link rel="alternate" type="application/rss+xml" title="{% trans "All comments" %}" href="{{ feed_url_for_comments }}" />
+{% endif %}
+
+
 {% if tags %}
     {% with tags|length as tags_count %}
         {% ifnotequal tags_count 1 %}
@@ -18,6 +30,7 @@
     {% ifnotequal feed_url_for_type feed_url_for_all_posts %}
         <link rel="alternate" type="application/rss+xml" title="{% trans "Posts with this type" %}" href="{{ feed_url_for_type }}" />
     {% endifnotequal %}
+
 
     {% if object and object.tags %}
         {% for tag in object.get_tags %}

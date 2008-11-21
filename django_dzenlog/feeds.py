@@ -84,7 +84,7 @@ def latest_comments(cls, comments_mixup, details_page_name):
 
         def get_object(self, bits):
             if len(bits) != 1:
-                raise ObjectDoesNotExist
+                return None
             self.object = get_object_or_404(cls, slug=bits[0])
             self.title = _(u'%(site_name)s: comments on "%(title)s"') % {
                 'title': self.object.title,
@@ -93,6 +93,8 @@ def latest_comments(cls, comments_mixup, details_page_name):
             return self.object
 
         def link(self):
+            if self.object is None:
+                return ''
             return reverse(details_page_name, kwargs=dict(slug=self.object.slug))
 
     return CommentsFeed

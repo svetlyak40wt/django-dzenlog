@@ -49,6 +49,13 @@ For example, you can tell dzenlog, that your feeds are on the feedburner:
     DZENLOG_GENERALPOST_FEED = 'http://feeds.feedburner.com/LazyCrazyCoder'
     DZENLOG_TEXTPOST_FEED = 'http://feeds.feedburner.com/LazyCrazyCoder/text'
 
+If you use some commenting system, than you can define your comment's feeds too:
+
+    DZENLOG_GENERALPOST_ALL_COMMENTS_FEED = \
+        'http://feeds.feedburner.com/LazyCrazyCoder/comments'
+    DZENLOG_TEXTPOST_ALL_COMMENTS_FEED = \
+        'http://feeds.feedburner.com/LazyCrazyCoder/comments/text'
+
 But that does not changes URLs of real feeds, and they will be able at /blog/rss/
 and /text/rss/. These settings are affect on HTML generation only.
 
