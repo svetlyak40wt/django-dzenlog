@@ -77,7 +77,7 @@ class GeneralPost(models.Model):
             obj = self.upcast()
             return reverse('dzenlog-%s-details' % obj._meta.module_name, kwargs=dict(slug=self.slug))
         except NoReverseMatch:
-            return reverse('dzenlog-%s-details' % self._meta.module_name, kwargs=dict(slug=self.slug))
+            return reverse('dzenlog-%s-details' % self.downcast()._meta.module_name, kwargs=dict(slug=self.slug))
 
     def save(self):
         today = datetime.today()
