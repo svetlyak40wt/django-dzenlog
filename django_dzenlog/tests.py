@@ -258,3 +258,63 @@ class URLConf(TestCase):
         from urls import create_patterns
         self.assertRaises(Exception, create_patterns, 'blah.minor')
 
+class PublishedSignal(TestCase):
+    def __init__(self, *args):
+        (self.author, created) = User.objects.get_or_create(username='tester')
+        self.sended = False
+
+        def receiver(instance, sender, signal):
+            self.assertEqual(TestPost, sender)
+            self.sended = True
+
+        from signals import published
+        published.connect(receiver, sender = TestPost, weak = False)
+        super(PublishedSignal, self).__init__(*args)
+
+    def setUp(self):
+        self.sended = False
+
+    def testNotSendIfNoDate(self):
+        TestPost(author=self.author,
+                 title='Test post',
+                 slug='first',
+                 publish_at=None,
+                 ).save()
+        self.assertEqual(False, self.sended)
+
+    def testSendIfDate(self):
+        TestPost(author=self.author,
+                 title='Test post',
+                 slug='first',
+                 publish_at=datetime.today(),
+                 ).save()
+        self.assertEqual(True, self.sended)
+
+    def testNotSendOnRemoveFromPublication(self):
+        post = TestPost(author=self.author,
+                 title='Test post',
+                 slug='first',
+                 publish_at=datetime.today(),
+                 )
+        post.save()
+
+        self.assertEqual(True, self.sended)
+        self.sended = False
+
+        post.publish_at = None
+        post.save()
+        self.assertEqual(False, self.sended)
+
+    def testSendOnPublication(self):
+        post = TestPost(author=self.author,
+                 title='Test post',
+                 slug='first',
+                 publish_at=None,
+                 )
+        post.save()
+
+        self.assertEqual(False, self.sended)
+
+        post.publish_at = datetime.today()
+        post.save()
+        self.assertEqual(True, self.sended)

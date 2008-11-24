@@ -8,6 +8,7 @@ from django.template.loader import render_to_string
 from django.core.urlresolvers import reverse, NoReverseMatch
 
 import settings
+import signals
 from pdb import set_trace
 
 if settings.HAS_TAGGING:
@@ -81,14 +82,26 @@ class GeneralPost(models.Model):
 
     def save(self):
         today = datetime.today()
-        if not self.id:
+        published = False
+
+        if self.id:
+            prev = GeneralPost.objects.get(pk = self.id)
+            published = \
+                prev.publish_at is None and self.publish_at is not None
+        else:
+            published = (self.publish_at is not None)
             self.created_at = today
+
         self.updated_at = today
+
 
         result = super(GeneralPost, self).save()
 
         if settings.HAS_TAGGING:
             self._save_tags()
 
+        if published:
+            signals.published.send(sender = type(self), instance = self)
+            signals.published.send(sender = GeneralPost, instance = self)
         return result
 
