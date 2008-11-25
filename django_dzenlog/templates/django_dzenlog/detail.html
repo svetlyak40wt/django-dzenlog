@@ -1,5 +1,7 @@
 {% extends 'django_dzenlog/base.html' %}
 
 {% block content %}
-    {% include object.body_detail_template %}
+    {% with object.upcast as object %}
+        {% include object.body_detail_template %}
+    {% endwith %}
 {% endblock %}
