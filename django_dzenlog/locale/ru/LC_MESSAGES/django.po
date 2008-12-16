@@ -8,105 +8,126 @@ msgid ""
 msgstr ""
 "Project-Id-Version: django-dzenlog 0.1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-11-13 00:48+0300\n"
-"PO-Revision-Date: 2008-11-13 00:49+0300\n"
+"POT-Creation-Date: 2008-12-16 03:06+0300\n"
+"PO-Revision-Date: 2008-12-16 03:06+0300\n"
 "Last-Translator: Alexander Artemenko <svetlyak.40wt@gmail.com>\n"
 "Language-Team: ru <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: feeds.py:25
+#: feeds.py:30
 #, python-format
 msgid "%(site_name)s: latest %(post_type)s"
 msgstr "%(site_name)s: последние %(post_type)s"
 
-#: feeds.py:30
+#: feeds.py:35
 #, python-format
 msgid "%(site_name)s: latest %(post_type)s with tag %(tag)s"
 msgstr "%(site_name)s: последние %(post_type)s с тегом %(tag)s"
 
-#: feeds.py:33
+#: feeds.py:38
 #, python-format
 msgid "%(site_name)s: latest %(post_type)s with tags %(tags)s"
 msgstr "%(site_name)s: последние %(post_type)s с тегами %(tags)s"
 
-#: models.py:25
+#: feeds.py:83
+#, python-format
+msgid "%s: comments"
+msgstr "%s: комментарии"
+
+#: feeds.py:89
+#, python-format
+msgid "%(site_name)s: comments on \"%(title)s\""
+msgstr "%(site_name)s: комментарии на \"%(title)s\""
+
+#: models.py:41
+msgid "Author"
+msgstr "Автор"
+
+#: models.py:42 migrations/0001_initial.py:18
 msgid "Title"
 msgstr "Заголовок"
 
-#: models.py:26
+#: models.py:43 migrations/0001_initial.py:19
 msgid "Slug title"
 msgstr "Сокращенный заголовок"
 
-#: models.py:27
+#: models.py:44 migrations/0001_initial.py:20
 msgid "Create date"
 msgstr "Дата создания"
 
-#: models.py:28
+#: models.py:46 migrations/0001_initial.py:21
 msgid "Update date"
 msgstr "Дата обновления"
 
-#: models.py:29
+#: models.py:48 migrations/0001_initial.py:22
 msgid "Publish date"
 msgstr "Дата публикации"
 
-#: models.py:30
+#: models.py:49 migrations/0001_initial.py:23
 msgid "Comments On"
 msgstr "Комментарии разрешены"
 
-#: models.py:55
+#: models.py:52
+msgid "Tags"
+msgstr "Теги"
+
+#: models.py:79
 msgid "Post"
 msgstr "Пост"
 
-#: models.py:56
+#: models.py:80
 msgid "Posts"
 msgstr "Посты"
 
-#: templates/django_dzenlog/base.html:18
+#: templates/django_dzenlog/base.html:21
 msgid "Dzenlog example"
 msgstr "Dzenlog пример"
+
+#: templates/django_dzenlog/body_detail.html:12
+#: templates/django_dzenlog/body_list.html:7
+#, python-format
+msgid "Published at %(publish_at)s, author %(author)s"
+msgstr "Опубликовано %(publish_at)s, автор %(author)s"
+
+#: templates/django_dzenlog/body_detail.html:15
+#: templates/django_dzenlog/body_list.html:10
+msgid "Tags:"
+msgstr "Теги:"
 
 #: templates/django_dzenlog/feeds.html:5
 msgid "All posts"
 msgstr "Все посты"
 
 #: templates/django_dzenlog/feeds.html:9
+msgid "Comments on this post"
+msgstr "Комментарии к этому посту"
+
+#: templates/django_dzenlog/feeds.html:14
+msgid "All comments"
+msgstr "Все комментарии"
+
+#: templates/django_dzenlog/feeds.html:21
 #, python-format
 msgid "Posts with this type and tags '%(tags_slug)s'"
 msgstr "Посты с таким типом и тегами '%(tags_slug)s'"
 
-#: templates/django_dzenlog/feeds.html:14
-#: templates/django_dzenlog/feeds.html:27
+#: templates/django_dzenlog/feeds.html:26
+#: templates/django_dzenlog/feeds.html:40
 #, python-format
 msgid "Posts with this type and tag '%(tag)s'"
 msgstr "Посты с таким типом и тегом '%(tag)s'"
 
-#: templates/django_dzenlog/feeds.html:19
+#: templates/django_dzenlog/feeds.html:31
 msgid "Posts with this type"
 msgstr "Посты этого типа"
 
-#: templates/django_dzenlog/feeds.html:25
+#: templates/django_dzenlog/feeds.html:38
 #, python-format
 msgid "All posts with tag '%(tag)s'"
 msgstr "Все посты с тегом '%(tag)s'"
 
-#: templates/django_dzenlog/generalpost.html:5
-msgid "Post's content"
-msgstr "Содержимое поста"
-
-#: templates/django_dzenlog/generalpost_list.html:15
-msgid "This blog is empty."
-msgstr "Этот блог пуст."
-
-#: templates/django_dzenlog/post.html:13
-#, python-format
-msgid "Published at %(publish_at)s, author %(author)s"
-msgstr "Опубликовано %(publish_at)s, автор %(author)s"
-
-#: templates/django_dzenlog/post.html:16
-msgid "Tags:"
-msgstr "Теги:"
-
-#~ msgid "Latest posts"
-#~ msgstr "Последние посты"
+#: templates/django_dzenlog/list.html:12
+msgid "There is no any posts."
+msgstr "Постов нет"

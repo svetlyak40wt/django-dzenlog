@@ -38,7 +38,7 @@ class GeneralPost(models.Model):
     feed_description_template = 'django_dzenlog/feed_description.html'
 
     # fields
-    author      = models.ForeignKey(User)
+    author      = models.ForeignKey(User, verbose_name = _('Author'))
     title       = models.CharField(_('Title'), max_length=100)
     slug        = models.SlugField(_('Slug title'), max_length=100, unique=True)
     created_at  = models.DateTimeField(_('Create date'),
@@ -49,7 +49,7 @@ class GeneralPost(models.Model):
     comments_on = models.BooleanField(_('Comments On'), default=True)
 
     if settings.HAS_TAGGING:
-        tags    = TagField()
+        tags    = TagField(_('Tags'))
 
         def _save_tags(self, *args, **kwargs):
             '''Helper method which makes sure,
