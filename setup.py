@@ -55,5 +55,6 @@ Features
         'templates': ['*.html'],
     },
     include_package_data = True,
+    zip_safe = False,
 )
 
