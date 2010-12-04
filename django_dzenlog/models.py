@@ -81,11 +81,13 @@ class GeneralPost(models.Model):
         ordering = ('-publish_at',)
 
     def get_edit_url(self):
-        return reverse('admin-root',
-                        args = ['/'.join((
-                            self._meta.app_label,
-                            self._meta.module_name,
-                            unicode(self.id)))])
+        return reverse(
+            'admin:%s_%s_change' % (
+                self._meta.app_label,
+                self._meta.module_name,
+            ),
+            args = [self.id]
+        )
 
     def upcast(self):
         return upcast(self)
