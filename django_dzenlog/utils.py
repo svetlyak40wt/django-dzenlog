@@ -1,5 +1,3 @@
-from django.db.models.query import CollectedObjects
-
 
 def upcast(obj):
     '''Upcast object to it's child.'''
@@ -7,9 +5,22 @@ def upcast(obj):
     try:
         return obj._upcast_result
     except AttributeError:
-        sub_objects = CollectedObjects()
-        obj._collect_sub_objects(sub_objects)
-        child = sub_objects.items()[0][1].values()[0]
+        from django.db.models.query import Collector
+
+        query = obj._default_manager.filter(pk = obj.pk)
+        collector = Collector(using = query.db)
+        collector.collect(query)
+
+        data = [
+            item[0]
+            for item in collector.data.values()
+            if item and item[0] != obj
+        ]
+        if data:
+            child = data[0]
+        else:
+            child = obj
+
         setattr(obj, '_upcast_result', child)
         setattr(child, '_upcast_result', child)
         return child

@@ -57,7 +57,7 @@ class GeneralPost(models.Model):
                content type.'''
             instance = self.downcast()
             setattr(instance, '_tags_cache', self._tags_cache)
-            self._meta.get_field('tags')._save(instance=instance)
+            self._meta.get_field('tags')._save(instance = instance)
 
         def get_tags(self, *args, **kwargs):
             return Tag.objects.get_for_object(self.downcast())
