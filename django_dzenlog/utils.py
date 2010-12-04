@@ -1,3 +1,4 @@
+from operator import itemgetter
 
 def upcast(obj):
     '''Upcast object to it's child.'''
@@ -11,11 +12,17 @@ def upcast(obj):
         collector = Collector(using = query.db)
         collector.collect(query)
 
-        data = [
-            item[0]
-            for item in collector.data.values()
-            if item and item[0] != obj
-        ]
+        def cmp_types(left, right):
+            if issubclass(left, right):
+                return -1
+            return 1
+
+        data = sorted(
+            map(itemgetter(0), collector.data.values()),
+            cmp = cmp_types,
+            key = type,
+        )
+
         if data:
             child = data[0]
         else:
