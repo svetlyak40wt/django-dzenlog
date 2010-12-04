@@ -10,3 +10,7 @@ class GeneralPostAdmin(admin.ModelAdmin):
         'slug': ('title',)
     }
 
+    def get_form(self, request, *args, **kwargs):
+        form = super(GeneralPostAdmin, self).get_form(request, *args, **kwargs)
+        form.base_fields['author'].initial = request.user
+        return form
